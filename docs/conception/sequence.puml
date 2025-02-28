@@ -1,0 +1,76 @@
+@startuml sequence
+
+actor User
+participant Client
+participant Server
+database DB
+
+== Registration ==
+User -> Client : Fills out the form
+activate Client
+Client -> Client : Validates data (email + password)
+alt Invalid data 
+  Client -> User : Returns an error message
+else Valid data
+  Client -> Server : Sends user data
+  activate Server
+  Server -> DB : Checks if the user exists
+  activate DB
+  alt Email exists
+      DB -> Server : Returns an error message
+      deactivate DB
+      Server -> Client : Sends an error message
+      deactivate Server
+      Client -> User : Stays on the registration page
+      deactivate Client
+  else Email does not exist
+      activate Server
+      Server -> Server : Hashes the password 
+      Server -> DB : Saves the user
+      activate DB
+      DB -> Server : Returns the user data
+      deactivate DB
+      Server -> Server : Generates JWT
+      Server -> Client : Returns JWT and user info
+      deactivate Server
+      activate Client
+      Client -> User : Displays success message and auto-login
+      deactivate Client
+  end
+end
+
+== Login ==
+User -> Client : Fills out the form
+activate Client
+Client -> Server : Sends credentials
+activate Server
+Server -> DB : Checks if email exists
+activate DB
+alt Email exists
+    DB -> Server : Returns user data
+    deactivate DB
+    Server -> Server : Validates password (hash comparison)
+    alt Password is correct
+        Server -> Server : Generates JWT
+        Server -> Client : Returns JWT and user info
+        deactivate Server
+        Client -> User : Displays success message
+        deactivate Client
+    else Password is incorrect
+        Server -> Client : Returns an error message
+        deactivate Server
+        activate Client
+        Client -> User : Stays on login page
+        deactivate Client
+    end
+else Email does not exist
+    DB -> Server : Returns null 
+    activate Server
+    Server -> Client : Returns an error message
+    deactivate Server
+    activate Client
+    Client -> User : Stays on login page
+    deactivate Client
+end
+
+@enduml

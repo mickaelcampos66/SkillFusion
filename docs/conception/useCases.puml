@@ -1,0 +1,41 @@
+@startuml usecase
+
+left to right direction
+actor Visitor
+actor User
+actor Instructor
+
+package SkillFusion {
+    usecase UC1 as "User Authentication"
+    usecase UC2 as "User Registration"
+    usecase UC3 as "User Profile Management"
+    usecase UC4 as "Instructor Course Management"
+    usecase UC5 as "Browse Courses by Category"
+    usecase UC6 as "View Course Details"
+    usecase UC7 as "Access Forum"
+    usecase UC8 as "Add a Post"
+    usecase UC9 as "Comment on a Post"
+    usecase UC10 as "Access Homepage"
+    usecase UC12 as "Access Privacy Policy"
+    usecase UC13 as "Contact Support"
+}
+
+Visitor --> UC10
+Visitor --> UC5
+Visitor --> UC6
+Visitor --> UC7
+Visitor -> UC2
+Visitor -> UC12
+Visitor -> UC13
+
+User --> UC1
+User --> UC3
+User --> UC8
+User --> UC9
+
+Instructor -> UC4
+
+Visitor ..> User : Inherits
+User ..> Instructor : Inherits
+
+@enduml

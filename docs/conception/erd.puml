@@ -1,0 +1,83 @@
+@startuml ERD
+left to right direction
+
+entity "User" as user {
+    * id : number <<generated>>
+    --
+    * firstname : string
+    * lastname : string
+    * email : string
+    * password : string
+    phone_number : string
+    address : string
+    * role_id : number
+}
+
+entity "Role" as role {
+    * id : number <<generated>>
+    --
+    * name : string
+}
+
+entity "Category" as category
+{
+    * id : number <<generated>>
+    --
+    * name : string
+}
+
+entity "Course" as course
+{
+    * id : number <<generated>>
+    --
+    * name : string
+    * description : string
+    * content : string
+    image : string
+    created_at : Date
+    updated_at : Date
+    level : string
+    created_by : number
+}
+
+entity "CourseCategory" as course_category
+{
+    * id : number <<generated>>
+    --
+    * course_id : number
+    * category_id : number
+}
+
+entity "Post" as post
+{
+    * id : number <<generated>>
+    --
+    * title : string
+    * content : string
+    created_at : Date
+    updated_at : Date
+    user_id : Number
+}
+
+entity "Message" as message
+{
+    * id : number <<generated>>
+    --
+    * content : string
+    created_at : Date
+    updated_at : Date
+    user_id : number
+    post_id : number
+}
+
+user }o--|| role : "has"
+user ||--o{ post : "create"
+user ||--o{ message : "send"
+user ||--o{ course : "create"
+
+post ||--o{ message : "contains"
+
+category }o--|| course_category : "belongs to"
+course }o--|| course_category : "belongs to"
+
+@enduml
