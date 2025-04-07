@@ -1,0 +1,16 @@
+name: Setup github action
+description: Setup github action environment, with docker buildx and .env file
+
+inputs:
+  init_env:
+    description: 'Which environment to use'
+    required: true
+    default: 'test'
+
+runs:
+  using: 'composite'
+  steps:
+    - run: cp .env.${{ inputs.init_env }}.dist .env
+      shell: bash
+
+    - uses: docker/setup-buildx-action@v3
