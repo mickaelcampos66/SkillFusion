@@ -58,8 +58,8 @@ nest: ## List all Nest commands or pass the parameter "c=" to run a given comman
 	@$(NEST) $(c)
 
 ## —— Next.js Frontend 🧙‍♂️ ———————————————————————————————————————————————————————————————
-lint-frontend: ## Run ESLint on the frontend code
+lint-frontend: ## Run ESLint on the frontend
 	@$(DOCKER_RUN) frontend yarn lint
 
-lint-fix-frontend: ## Run ESLint on the frontend code and fix errors
+lint-fix-frontend: ## Run ESLint on the frontend and fix errors
 	@$(FRONTEND_CONT) yarn lint:fix
