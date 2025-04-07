@@ -12,5 +12,3 @@ runs:
   steps:
     - run: cp .env.${{ inputs.init_env }}.dist .env
       shell: bash
-
-    - uses: docker/setup-buildx-action@v3
