@@ -4,27 +4,28 @@ import { Course } from "src/types/course.type";
 
 @Controller('courses')
 export class CoursesController {
-  constructor(private readonly coursesService: CoursesService) {}
+  constructor(private readonly CoursesService: CoursesService) {}
 
   @Get()
   findAll(): Array<Course> {
-    return this.coursesService.findAll();
+    return this.CoursesService.findAll();
   }
 
   @Get(':id')
   findOne(@Param ('id') id: number): Course {
-    return this.coursesService.findOne(id);
+    return this.CoursesService.findOne(id);
   }
 
   @Put(':id')
   updateOne(@Param ('id') id: number) {
-    return this.coursesService.updateOne(id);
+    return this.CoursesService.updateOne(id);
   }
 
   @Post()
   create() {}
 
   @Delete(':id')
-  deleteOne() {}
-
+  deleteOne(@Param ('id') id: number) {
+    return this.CoursesService.deleteOne(id);
+  }
 }
