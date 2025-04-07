@@ -33,7 +33,7 @@ install-back: ## Install backend dependencies
 	@$(DOCKER_RUN) backend yarn install
 
 ## —— Docker 🐳 ————————————————————————————————————————————————————————————————
-build: ## Build the docker images, pass the parameter "s=" to build a specific service, example: make build s=frontend, you also can pass any docker flags 
+build: ## Build the docker images, pass the parameter "s=" to build a specific service, example: make build s=frontend, you also can pass any docker flags
 	@$(eval s ?=)
 	@$(DOCKER_COMP) build $(s)
 
@@ -56,3 +56,10 @@ nest: ## List all Nest commands or pass the parameter "c=" to run a given comman
 	@$(eval c ?=)
 	@echo "Running Nest command: $(c)"
 	@$(NEST) $(c)
+
+## —— Next.js Frontend 🧙‍♂️ ———————————————————————————————————————————————————————————————
+lint-front: ## Run ESLint on the frontend code
+	@$(FRONTEND_CONT) yarn lint
+
+lint-fix-front: ## Run ESLint on the frontend code and fix errors
+	@$(FRONTEND_CONT) yarn lint:fix
