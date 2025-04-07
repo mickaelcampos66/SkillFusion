@@ -1,0 +1,43 @@
+services:
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: ../../docker/frontend/Dockerfile
+      target: test
+
+  backend:
+    restart: "no"
+    build:
+      context: ./apps/backend
+      dockerfile: ../../docker/backend/Dockerfile
+      target: test
+      args:
+        - DATABASE_URL=${TEST_DATABASE_URL}
+    depends_on:
+      test-database:
+        condition: service_healthy
+    networks:
+      - backend
+
+  test-database:
+    image: postgres:16-alpine
+    volumes:
+      - test-database:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${TEST_POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${TEST_POSTGRES_PASSWORD:-password}
+      - POSTGRES_DB=${TEST_POSTGRES_DB:-test}
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  test-database:
