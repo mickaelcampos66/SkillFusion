@@ -12,22 +12,12 @@ export class AuthController {
 
     @Post('signup')
     register(@Body() dto: RegisterDto) {
-        this.validData(dto);
         return this.authService.register(dto);
     }
 
     @Post('login')
     login(@Body() dto: LoginDto) {
-        this.validData(dto);
         return this.authService.login(dto);
     }
 
-    private validData(dto: RegisterDto | LoginDto): boolean {
-        validate(dto).then(errors => {
-            if (errors.length > 0) {
-                throw new Error('Validation failed');
-            }
-        });
-        return true;
-    }
 }
