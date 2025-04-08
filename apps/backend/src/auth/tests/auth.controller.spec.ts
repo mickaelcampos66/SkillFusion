@@ -1,7 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from '../controllers/auth.controller';
 import { AuthService } from '../services/auth.service';
 import { RegisterDto } from '../dto/register.dto';
+import { AuthController } from '../controllers/auth.controller';
+import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException } from '@nestjs/common';
 
 describe('AuthController', () => {
