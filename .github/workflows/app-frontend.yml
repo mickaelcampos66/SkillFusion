@@ -1,0 +1,27 @@
+name: App Frontend
+
+on:
+  workflow_call:
+
+jobs:
+  ci:
+    name: CI Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup
+        with:
+          init_env: test
+
+      - name: Build Frontend Docker image
+        uses: ./.github/actions/docker-build
+        with:
+          service: frontend
+          target: test
+
+      - name: Run ESLint
+        run: make lint-frontend
+
+      - uses: ./.github/actions/cleanup
