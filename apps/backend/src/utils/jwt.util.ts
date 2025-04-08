@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class JwtUtil {
-  private static readonly EXPIRES_IN = '12h';
+  private static readonly EXPIRES_IN = '30d';
 
   constructor(private readonly jwtService: JwtService) {}
 

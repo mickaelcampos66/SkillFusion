@@ -6,6 +6,7 @@ services:
       target: test
 
   backend:
+    env_file: .env
     restart: "no"
     build:
       context: ./apps/backend
