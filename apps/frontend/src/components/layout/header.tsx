@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { MobileNav } from './mobile-nav'
+import { MobileNav } from './navbar/mobile-nav'
+import { DesktopNav } from './navbar/desktop-nav'
 
 export function Header() {
   return (
@@ -19,7 +20,7 @@ export function Header() {
           />
           <span className="sr-only">Accueil</span>
         </Link>
-        {/* <MainNav /> */}
+        <DesktopNav />
         <MobileNav />
       </div>
     </header>
