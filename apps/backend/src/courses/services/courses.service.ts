@@ -7,7 +7,7 @@ export class CoursesService {
   constructor(private readonly PrismaService: PrismaService) {}
 
   async findAll(): Promise<Array<Course>> {
-    return this.PrismaService.course.findAll({});
+    return this.PrismaService.course.find({});
   }
 
   async findOne(id: number): Promise<Course> {
