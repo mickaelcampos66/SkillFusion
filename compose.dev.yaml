@@ -15,6 +15,7 @@ services:
       - frontend
 
   backend:
+    env_file: .env
     restart: unless-stopped
     build:
       context: ./apps/backend
