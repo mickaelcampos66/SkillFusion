@@ -1,7 +1,6 @@
 'use client'
 
 import * as React from 'react'
-import Link from 'next/link'
 
 import { navItems } from '@/constant/nav'
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden'
@@ -13,6 +12,7 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer'
 import { Icons } from '@/components/ui/icons'
+import { NavLink } from '@/components/ui/navlink'
 
 export function MobileNav() {
   const [open, setOpen] = React.useState(false)
@@ -41,13 +41,12 @@ export function MobileNav() {
           <ul className="flex flex-col space-y-3">
             {navItems?.map(item => (
               <li key={item.href}>
-                <Link
+                <NavLink
                   href={item.href}
+                  title={item.title}
                   onClick={() => onOpenChange(false)}
-                  className="text-[1.15rem]"
-                >
-                  {item.title}
-                </Link>
+                  variant="mobile"
+                />
               </li>
             ))}
           </ul>

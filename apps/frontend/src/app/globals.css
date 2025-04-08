@@ -70,6 +70,6 @@
 
 @layer utilities {
   .container-wrapper {
-    @apply max-w-[1400px] min-[1800px]:max-w-screen-2xl min-[1400px]:border-x border-border/70 mx-auto w-full border-dashed;
+    @apply max-w-[1400px] min-[1800px]:max-w-screen-2xl mx-auto w-full;
   }
 }
