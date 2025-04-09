@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NavLink does apply mobile variant 1`] = `
+<DocumentFragment>
+  <a
+    class="text-[1.15rem] px-1 hover:text-primary transition-colors duration-200 ease-in-out text-foreground"
+    href="/test-path"
+  >
+    Test Link
+  </a>
+</DocumentFragment>
+`;
+
+exports[`NavLink renders the link with the correct title and href, with default variant 1`] = `
+<DocumentFragment>
+  <a
+    class="text-[1.15rem] px-1 hover:text-primary transition-colors duration-200 ease-in-out text-secondary-foreground"
+    href="/test-path"
+  >
+    Test Link
+  </a>
+</DocumentFragment>
+`;
