@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcryptjs';
 import { PrismaUser } from '../../type/prisma';
-import { ApiResponse } from 'src/common/dto/response.dto';
+import { ApiResponse } from 'src/common/ApiResponse';
 import { PrismaService } from 'src/prisma.service';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
