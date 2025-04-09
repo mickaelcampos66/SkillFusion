@@ -24,4 +24,7 @@ jobs:
       - name: Run ESLint
         run: make lint-frontend
 
+      - name: Run Tests
+        run: make test-frontend-ci
+
       - uses: ./.github/actions/cleanup
