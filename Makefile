@@ -63,3 +63,12 @@ lint-frontend: ## Run ESLint on the frontend
 
 lint-fix-frontend: ## Run ESLint on the frontend and fix errors
 	@$(FRONTEND_CONT) yarn lint:fix
+
+test-frontend: ## Run tests on the frontend
+	@$(FRONTEND_CONT) yarn test
+
+test-frontend-watch: ## Run tests on the frontend in watch mode
+	@$(FRONTEND_CONT) yarn test:watch
+
+test-frontend-ci: ## Run tests on the frontend in CI mode
+	@$(DOCKER_RUN) frontend yarn test:ci
