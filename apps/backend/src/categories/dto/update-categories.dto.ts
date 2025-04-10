@@ -3,7 +3,7 @@ import { IsNotEmpty, IsNumber } from 'class-validator';
 
 import { CategoryDto } from './category.dto';
 
-export class UpdateCategoryDto extends PartialType(CategoryDto) {
+export class UpdateCategoriesDto extends PartialType(CategoryDto) {
   @IsNotEmpty()
   @IsNumber()
   id: number;

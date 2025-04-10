@@ -17,6 +17,7 @@ export class CategoryDto {
   @IsString()
   name: string;
 
-  @IsNotEmpty()
-  courseCategories: Array<string>; //FIXME: Use Array<CourseCategory> instead.
+  // TODO: Is needed?
+  // @IsNotEmpty()
+  // courseCategories: Array<CourseCategoryDto>;
 }
