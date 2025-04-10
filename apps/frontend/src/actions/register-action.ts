@@ -1,5 +1,7 @@
 'use server'
 
+import { createSession } from '@/lib/session'
+import { redirect } from 'next/navigation'
 import { env } from '~/env.config'
 
 type RegisterFormState = {
@@ -8,18 +10,18 @@ type RegisterFormState = {
   issues?: string[]
 }
 
-type RegisterResult = {
+type ErrorType = {
+  message: string | string[]
+  error: string
+  statusCode: number
+}
+
+export type RegisterUserResult = {
   message: string
   id: number
   firstname: string
   lastname: string
   accessToken: string
-}
-
-type ErrorType = {
-  message: string | string[]
-  error: string
-  statusCode: number
 }
 
 export async function registerAction(
@@ -61,11 +63,9 @@ export async function registerAction(
       }
     }
 
-    const result: RegisterResult = await response.json()
+    const result: RegisterUserResult = await response.json()
 
-    return {
-      message: result.message,
-    }
+    await createSession(result)
   }
   catch (error) {
     return {
@@ -74,4 +74,6 @@ export async function registerAction(
       issues: [error instanceof Error ? error.message : 'Unknown error, please try again, or contact support'],
     }
   }
+
+  redirect('/')
 }

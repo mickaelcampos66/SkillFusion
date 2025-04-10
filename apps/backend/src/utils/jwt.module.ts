@@ -6,7 +6,7 @@ import * as process from 'process';
 @Module({
   imports: [
     NestJwtModule.register({
-      secret: process.env.JWT_SECRET,
+      secret: Buffer.from(new TextEncoder().encode(process.env.JWT_SECRET)),
       signOptions: { expiresIn: process.env.EXPIRES_IN },
     }),
   ],
