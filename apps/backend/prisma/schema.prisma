@@ -26,18 +26,24 @@ model User {
   posts        Post[]
   messages     Message[]
   courses      Course[]  @relation("CreatedCourses")
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
 }
 
 model Role {
-  id    Int    @id @default(autoincrement())
-  name  String
-  users User[]
+  id         Int      @id @default(autoincrement())
+  name       String
+  users      User[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 model Category {
   id               Int              @id @default(autoincrement())
   name             String           @unique
   courseCategories CourseCategory[]
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @updatedAt
 }
 
 model Course {
@@ -46,12 +52,12 @@ model Course {
   description      String
   content          String
   image            String?
-  created_at       DateTime?
-  updated_at       DateTime?
   level            String
   created_by       Int
   creator          User             @relation("CreatedCourses", fields: [created_by], references: [id])
   courseCategories CourseCategory[]
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @updatedAt
 }
 
 model CourseCategory {
@@ -60,6 +66,8 @@ model CourseCategory {
   category_id Int
   course      Course   @relation(fields: [course_id], references: [id])
   category    Category @relation(fields: [category_id], references: [id])
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
 
   @@unique([course_id, category_id])
 }
@@ -68,20 +76,20 @@ model Post {
   id         Int       @id @default(autoincrement())
   title      String
   content    String
-  created_at DateTime?
-  updated_at DateTime?
   user_id    Int
   user       User      @relation(fields: [user_id], references: [id])
   messages   Message[]
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
 }
 
 model Message {
   id         Int      @id @default(autoincrement())
   content    String
-  created_at DateTime?
-  updated_at DateTime?
   user_id    Int
   post_id    Int
   user       User     @relation(fields: [user_id], references: [id])
   post       Post     @relation(fields: [post_id], references: [id])
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
