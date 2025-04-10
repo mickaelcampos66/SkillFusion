@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
-import { UpdateCategoryDto } from '../dto/update-category.dto';
+import { UpdateCategoriesDto } from '../dto/update-categories.dto';
 import { CategoryDto } from '../dto/category.dto';
-import { CreateCategoryDto } from '../dto/create-category.dto';
+import { CreateCategoriesDto } from '../dto/create-categories.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -13,12 +13,12 @@ export class CategoriesService {
   }
 
   async findOne(id: number): Promise<CategoryDto | null> {
-    return this.PrismaService.category.findOne({ where: { id } });
+    return this.PrismaService.category.findUnique({ where: { id } });
   }
 
   async updateOne(
     id: number,
-    categories: UpdateCategoryDto,
+    categories: UpdateCategoriesDto,
   ): Promise<CategoryDto | null> {
     return this.PrismaService.category.update({
       where: { id },
@@ -26,15 +26,15 @@ export class CategoriesService {
     });
   }
 
-  async create(categories: CreateCategoryDto): Promise<CategoryDto | null> {
+  async create(categories: CreateCategoriesDto): Promise<CategoryDto | null> {
     return this.PrismaService.category.create({ data: categories });
   }
 
   async deleteOne(id: number): Promise<boolean> {
-    // InternalServerErrorException
     const deleteTask: CategoryDto = await this.PrismaService.category.delete({
       where: { id },
     });
+
     return !!deleteTask;
   }
 }
