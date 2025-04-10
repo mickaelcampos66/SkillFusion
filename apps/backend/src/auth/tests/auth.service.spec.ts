@@ -21,7 +21,9 @@ describe('AuthService', () => {
       },
     } as unknown as PrismaService;
 
-    jwtService = new JwtService({ secret: 'test-secret' }) as jest.Mocked<JwtService>;
+    jwtService = new JwtService({
+      secret: 'test-secret',
+    }) as jest.Mocked<JwtService>;
 
     authService = new AuthService(prismaService, jwtService);
   });
@@ -103,7 +105,9 @@ describe('AuthService', () => {
 
     it('should throw BadRequestException if create user fails', async () => {
       (prismaService.user.findUnique as jest.Mock).mockResolvedValueOnce(null);
-      (prismaService.user.create as jest.Mock).mockRejectedValue(new Error('Database error'));
+      (prismaService.user.create as jest.Mock).mockRejectedValue(
+        new Error('Database error'),
+      );
 
       await expect(
         authService.register({
@@ -161,7 +165,7 @@ describe('AuthService', () => {
 
       expect(result).toEqual({
         message: 'Login successful',
-        id: 1,  // Changer userId en id
+        id: 1, // Changer userId en id
         firstname: 'John',
         lastname: 'Doe',
         accessToken: 'fake-jwt-token',
