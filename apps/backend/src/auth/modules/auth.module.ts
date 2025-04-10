@@ -9,5 +9,4 @@ import { JwtCustomModule } from "src/utils/jwt.module";
     controllers: [AuthController],
     providers: [AuthService, PrismaService],
 })
-
 export class AuthModule {}

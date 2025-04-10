@@ -13,16 +13,16 @@ NEST = $(BACKEND_CONT) yarn nest
 
 # Misc
 .DEFAULT_GOAL = help
-.PHONY: help copy-env install build start frontend backend nest
+.PHONY: help copy-env install build start frontend backend nest migrations fixtures install-front install-back lint-frontend lint-fix-frontend test-frontend test-frontend-watch test-frontend-ci
 
 help: ## Outputs this help screen
 	@grep -E '(^[a-zA-Z0-9\./_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
 
 ## —— Bootstrap 🚀 ————————————————————————————————————————————————————————————————
-bootstrap: copy-env build install start ## Bootstrap the project
+bootstrap: copy-env build install start migrations fixtures ## Bootstrap the project
 
 copy-env: ## Copy .env.<environment>.<dist> to .env.<environment>
-	cp .env.$(ENV).dist .env
+	cp -n .env.$(ENV).dist .env
 
 install: install-front install-back ## Install all dependencies
 
@@ -57,9 +57,24 @@ nest: ## List all Nest commands or pass the parameter "c=" to run a given comman
 	@echo "Running Nest command: $(c)"
 	@$(NEST) $(c)
 
+migrations: ## Run database migrations
+	@$(BACKEND_CONT) yarn prisma migrate deploy
+
+fixtures: ## Run database fixtures
+	@$(BACKEND_CONT) yarn seed
+
 ## —— Next.js Frontend 🧙‍♂️ ———————————————————————————————————————————————————————————————
 lint-frontend: ## Run ESLint on the frontend
 	@$(DOCKER_RUN) frontend yarn lint
 
 lint-fix-frontend: ## Run ESLint on the frontend and fix errors
 	@$(FRONTEND_CONT) yarn lint:fix
+
+test-frontend: ## Run tests on the frontend
+	@$(FRONTEND_CONT) yarn test
+
+test-frontend-watch: ## Run tests on the frontend in watch mode
+	@$(FRONTEND_CONT) yarn test:watch
+
+test-frontend-ci: ## Run tests on the frontend in CI mode
+	@$(DOCKER_RUN) frontend yarn test:ci
