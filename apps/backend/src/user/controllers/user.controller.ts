@@ -28,11 +28,6 @@ export class UserController {
     return this.userService.findAll(pageNumber, limitNumber);
   }
 
-  @Get('email/:email')
-  findByEmail(@Param('email') email: string) {
-    return this.userService.findByEmail(email);
-  }
-
   @Get('me')
   async findMe(@Req() request: Request) {
     const authorization = request.headers['authorization'];
@@ -48,7 +43,6 @@ export class UserController {
   async findOne(@Param('id') id: string) {
     return this.userService.findOne(+id);
   }
-
 
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
