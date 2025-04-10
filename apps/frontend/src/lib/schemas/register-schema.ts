@@ -17,8 +17,9 @@ const registerSchema = z.object({
   phone_number: z
     .string()
     .trim()
-    .regex(/^(\+33|0)[1-9](\d{2}){4}$/, { message: 'Numéro de téléphone invalide' })
-    .optional(),
+    .refine(value => !value || /^(\+33|0)[1-9](\d{2}){4}$/.test(value), {
+      message: 'Numéro de téléphone invalide',
+    }),
   address: z.string().optional(),
 }).superRefine((data, ctx) => {
   if (data.confirm_password !== data.password) {

@@ -55,12 +55,19 @@ export function RegisterForm() {
         }}
         className="flex flex-col gap-4 w-full max-w-lg"
       >
+        {state?.message && (
+          <ErrorMessage>
+            {state.message}
+          </ErrorMessage>
+        )}
         {state?.issues && (
-          <ul>
+          <ul className="space-y-2">
             {state.issues.map(issue => (
-              <ErrorMessage key={issue}>
-                {issue}
-              </ErrorMessage>
+              <li key={issue}>
+                <ErrorMessage>
+                  {issue}
+                </ErrorMessage>
+              </li>
             ))}
           </ul>
         )}
@@ -69,9 +76,9 @@ export function RegisterForm() {
           name="firstname"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Prénom</FormLabel>
+              <FormLabel required>Prénom</FormLabel>
               <FormControl>
-                <Input placeholder="Pierre" {...field} />
+                <Input placeholder="Pierre" required {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -82,9 +89,9 @@ export function RegisterForm() {
           name="lastname"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nom</FormLabel>
+              <FormLabel required>Nom</FormLabel>
               <FormControl>
-                <Input placeholder="Dupont" {...field} />
+                <Input placeholder="Dupont" required {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -95,9 +102,9 @@ export function RegisterForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel required>Email</FormLabel>
               <FormControl>
-                <Input type="email" {...field} />
+                <Input type="email" required {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -108,9 +115,9 @@ export function RegisterForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Mot de passe</FormLabel>
+              <FormLabel required>Mot de passe</FormLabel>
               <FormControl>
-                <Input type="password" {...field} />
+                <Input type="password" required {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -121,9 +128,9 @@ export function RegisterForm() {
           name="confirm_password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirmer le mot de passe</FormLabel>
+              <FormLabel required>Confirmer le mot de passe</FormLabel>
               <FormControl>
-                <Input type="password" {...field} />
+                <Input type="password" required {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
