@@ -5,7 +5,7 @@ import { UpdateCourseDto } from '../dto/update-course.dto';
 import { CreateCourseDto } from '../dto/create-course.dto';
 import { ApiOperation, ApiResponse, ApiTags, ApiParam, ApiBody } from '@nestjs/swagger';
 
-@ApiTags('Courses') // Regroupe ces routes sous "Courses" dans Swagger
+@ApiTags('Courses')
 @Controller('courses')
 export class CoursesController {
   constructor(private readonly CoursesService: CoursesService) {}

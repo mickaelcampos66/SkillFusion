@@ -18,7 +18,7 @@ export class AuthController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Email already in use',
+    description: 'Email already in use or invalid data payload',
   })
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
