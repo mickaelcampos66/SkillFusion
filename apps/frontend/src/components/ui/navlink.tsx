@@ -21,10 +21,10 @@ const linkVariants = cva(
 )
 
 interface NavLinkProps extends LinkProps, VariantProps<typeof linkVariants> {
-  title: string
+  children?: React.ReactNode
 }
 
-export function NavLink({ href, title, variant, ...props }: NavLinkProps) {
+export function NavLink({ children, href, variant, ...props }: NavLinkProps) {
   const pathname = usePathname()
   return (
     <Link
@@ -33,7 +33,7 @@ export function NavLink({ href, title, variant, ...props }: NavLinkProps) {
         pathname === href && 'text-primary font-bold')}
       {...props}
     >
-      {title}
+      {children}
     </Link>
   )
 }
