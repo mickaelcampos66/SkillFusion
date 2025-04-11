@@ -8,8 +8,6 @@ CREATE TABLE "User" (
     "phone_number" TEXT,
     "address" TEXT,
     "role_id" INTEGER NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -18,8 +16,6 @@ CREATE TABLE "User" (
 CREATE TABLE "Role" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Role_pkey" PRIMARY KEY ("id")
 );
@@ -28,8 +24,6 @@ CREATE TABLE "Role" (
 CREATE TABLE "Category" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
 );
@@ -41,10 +35,10 @@ CREATE TABLE "Course" (
     "description" TEXT NOT NULL,
     "content" TEXT NOT NULL,
     "image" TEXT,
+    "created_at" TIMESTAMP(3),
+    "updated_at" TIMESTAMP(3),
     "level" TEXT NOT NULL,
     "created_by" INTEGER NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Course_pkey" PRIMARY KEY ("id")
 );
@@ -54,8 +48,6 @@ CREATE TABLE "CourseCategory" (
     "id" SERIAL NOT NULL,
     "course_id" INTEGER NOT NULL,
     "category_id" INTEGER NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "CourseCategory_pkey" PRIMARY KEY ("id")
 );
@@ -65,9 +57,9 @@ CREATE TABLE "Post" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "content" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3),
+    "updated_at" TIMESTAMP(3),
     "user_id" INTEGER NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
 );
@@ -76,10 +68,10 @@ CREATE TABLE "Post" (
 CREATE TABLE "Message" (
     "id" SERIAL NOT NULL,
     "content" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3),
+    "updated_at" TIMESTAMP(3),
     "user_id" INTEGER NOT NULL,
     "post_id" INTEGER NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Message_pkey" PRIMARY KEY ("id")
 );
@@ -89,9 +81,6 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Category_name_key" ON "Category"("name");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Course_name_key" ON "Course"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "CourseCategory_course_id_category_id_key" ON "CourseCategory"("course_id", "category_id");
