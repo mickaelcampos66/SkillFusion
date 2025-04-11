@@ -1,7 +1,7 @@
 import { NavLink } from '@/components/ui/navlink'
-import { navItems } from '@/constant/nav'
+import { NavProps } from '../header'
 
-export function DesktopNav() {
+export function DesktopNav({ navItems }: NavProps) {
   return (
     <nav>
       <ul className="hidden md:flex gap-6">

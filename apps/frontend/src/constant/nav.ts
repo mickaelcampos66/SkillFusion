@@ -1,4 +1,4 @@
-type NavItem = {
+export type NavItem = {
   title: string
   href: string
 }
