@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Inject,
   Param,
   Post,
   Put,
@@ -14,7 +15,7 @@ import { CreateCourseDto } from '../dto/create-course.dto';
 
 @Controller('courses')
 export class CoursesController {
-  constructor(private readonly CoursesService: CoursesService) {}
+  constructor(@Inject() private readonly CoursesService: CoursesService) {}
 
   @Get()
   findAll(): Promise<Array<CourseDto>> {
