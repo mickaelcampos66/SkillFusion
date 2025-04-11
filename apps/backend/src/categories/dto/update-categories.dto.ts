@@ -1,10 +1,7 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { OmitType, PartialType } from '@nestjs/mapped-types';
 
 import { CategoryDto } from './category.dto';
 
-export class UpdateCategoriesDto extends PartialType(CategoryDto) {
-  @IsNotEmpty()
-  @IsNumber()
-  id: number;
-}
+export class UpdateCategoriesDto extends PartialType(
+  OmitType(CategoryDto, ['id']),
+) {}
