@@ -14,7 +14,7 @@ import { Icons } from '@/components/ui/icons'
 import { NavLink } from '@/components/ui/navlink'
 import { NavProps } from '../header'
 
-export function MobileNav({ navItems }: NavProps) {
+export function MobileNav({ navItems, isLoggedIn }: NavProps) {
   const [open, setOpen] = React.useState(false)
 
   const onOpenChange = React.useCallback(
@@ -43,12 +43,24 @@ export function MobileNav({ navItems }: NavProps) {
               <li key={item.href}>
                 <NavLink
                   href={item.href}
-                  title={item.title}
                   onClick={() => onOpenChange(false)}
                   variant="mobile"
-                />
+                >
+                  {item.title}
+                </NavLink>
               </li>
             ))}
+            {isLoggedIn && (
+              <li>
+                <NavLink
+                  href="/profile"
+                  onClick={() => onOpenChange(false)}
+                  variant="mobile"
+                >
+                  Profile
+                </NavLink>
+              </li>
+            )}
           </ul>
         </nav>
       </DrawerContent>

@@ -10,7 +10,7 @@ describe('NavLink', () => {
   it('renders the link with the correct title and href, with default variant', () => {
     (usePathname as jest.Mock).mockReturnValue('/active-path')
 
-    const { asFragment } = render(<NavLink href="/test-path" title="Test Link" variant="default" />)
+    const { asFragment } = render(<NavLink href="/test-path" variant="default">Test Link</NavLink>)
 
     const linkElement = screen.getByRole('link', { name: 'Test Link' })
     expect(linkElement).toBeInTheDocument()
@@ -21,7 +21,7 @@ describe('NavLink', () => {
   it('does apply mobile variant', () => {
     (usePathname as jest.Mock).mockReturnValue('/active-path')
 
-    const { asFragment } = render(<NavLink href="/test-path" title="Test Link" variant="mobile" />)
+    const { asFragment } = render(<NavLink href="/test-path" variant="mobile">Test Link</NavLink>)
 
     expect(asFragment()).toMatchSnapshot()
   })
@@ -29,7 +29,7 @@ describe('NavLink', () => {
   it('applies active styles when the current path matches the href', () => {
     (usePathname as jest.Mock).mockReturnValue('/active-path')
 
-    render(<NavLink href="/active-path" title="Active Link" variant="default" />)
+    render(<NavLink href="/active-path" variant="default">Active Link</NavLink>)
 
     const linkElement = screen.getByRole('link', { name: 'Active Link' })
     expect(linkElement).toHaveClass('text-primary font-bold')
@@ -38,7 +38,7 @@ describe('NavLink', () => {
   it('does not apply active styles when the current path does not match the href', () => {
     (usePathname as jest.Mock).mockReturnValue('/different-path')
 
-    render(<NavLink href="/test-path" title="Inactive Link" variant="default" />)
+    render(<NavLink href="/test-path" variant="default">Inactive Link</NavLink>)
 
     const linkElement = screen.getByRole('link', { name: 'Inactive Link' })
     expect(linkElement).not.toHaveClass('text-primary font-bold')

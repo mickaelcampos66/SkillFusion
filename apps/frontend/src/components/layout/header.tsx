@@ -7,6 +7,7 @@ import { NavItem, navItems } from '@/constant/nav'
 
 export type NavProps = {
   navItems: NavItem[]
+  isLoggedIn: boolean
 }
 
 export async function Header() {
@@ -33,8 +34,8 @@ export async function Header() {
           />
           <span className="sr-only">Accueil</span>
         </Link>
-        <DesktopNav navItems={filteredNavItems} />
-        <MobileNav navItems={filteredNavItems} />
+        <DesktopNav navItems={filteredNavItems} isLoggedIn={isLoggedIn} />
+        <MobileNav navItems={filteredNavItems} isLoggedIn={isLoggedIn} />
       </div>
     </header>
   )
