@@ -27,7 +27,9 @@ async function bootstrap() {
     .setDescription('The SkillFusion API description')
     .setVersion('1.0')
     .addTag('skillfusion')
+    .addBearerAuth()
     .build();
+
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
 

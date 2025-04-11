@@ -5,7 +5,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Req } from '@
 import { Request } from 'express';
 import { JwtUtil } from 'src/utils/jwt.util';
 import { IVerifiedToken } from 'src/interface/IVerifiedToken';
-import { ApiOperation, ApiResponse, ApiTags, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags, ApiParam, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
+
 
 @ApiTags('Users')
 @Controller('users')
@@ -59,6 +60,7 @@ export class UserController {
   }
 
   @Get('me')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get the current user' })
   @ApiResponse({
     status: 200,
