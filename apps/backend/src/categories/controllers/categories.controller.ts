@@ -7,26 +7,26 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { CategoryDto } from '../dto/category.dto';
 import { UpdateCategoriesDto } from '../dto/update-categories.dto';
 import { CategoriesService } from '../services/categories.service';
 import { CreateCategoriesDto } from '../dto/create-categories.dto';
 import { MessageUtil, MessageUtilType } from '../../utils/message.util';
+import { CategoryEntity } from '../entities/category.entity';
 
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly CategoriesService: CategoriesService) {}
 
   @Get()
-  findAll(): Promise<Array<CategoryDto>> {
+  findAll(): Promise<Array<CategoryEntity>> {
     return this.CategoriesService.findAll();
   }
 
   @Get(':id')
   async findOne(
     @Param('id') id: number,
-  ): Promise<CategoryDto | MessageUtilType> {
-    const category: CategoryDto | null =
+  ): Promise<CategoryEntity | MessageUtilType> {
+    const category: CategoryEntity | null =
       await this.CategoriesService.findOne(id);
 
     if (!category) {
@@ -40,11 +40,9 @@ export class CategoriesController {
   async updateOne(
     @Param('id') id: number,
     @Body() categories: UpdateCategoriesDto,
-  ): Promise<CategoryDto | MessageUtilType> {
-    const category: CategoryDto | null = await this.CategoriesService.updateOne(
-      id,
-      categories,
-    );
+  ): Promise<CategoryEntity | MessageUtilType> {
+    const category: CategoryEntity | null =
+      await this.CategoriesService.updateOne(id, categories);
 
     if (!category) {
       return new MessageUtil(404, false, 'Category not found').toJSON();
@@ -56,8 +54,8 @@ export class CategoriesController {
   @Post()
   async create(
     @Body() categories: CreateCategoriesDto,
-  ): Promise<CategoryDto | MessageUtilType> {
-    const category: CategoryDto | null =
+  ): Promise<CategoryEntity | MessageUtilType> {
+    const category: CategoryEntity | null =
       await this.CategoriesService.create(categories);
 
     if (!category) {

@@ -1,7 +1,6 @@
 import { OmitType, PartialType } from '@nestjs/mapped-types';
-
-import { CategoryDto } from './category.dto';
+import { CategoryEntity } from '../entities/category.entity';
 
 export class UpdateCategoriesDto extends PartialType(
-  OmitType(CategoryDto, ['id']),
+  OmitType(CategoryEntity, ['id']),
 ) {}

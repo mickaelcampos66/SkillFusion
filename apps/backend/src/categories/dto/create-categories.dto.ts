@@ -1,9 +1,8 @@
 import { OmitType } from '@nestjs/mapped-types';
 import { IsNotEmpty, IsString } from 'class-validator';
+import { CategoryEntity } from '../entities/category.entity';
 
-import { CategoryDto } from './category.dto';
-
-export class CreateCategoriesDto extends OmitType(CategoryDto, ['id']) {
+export class CreateCategoriesDto extends OmitType(CategoryEntity, ['id']) {
   @IsNotEmpty()
   @IsString()
   name: string;
