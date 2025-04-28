@@ -51,15 +51,26 @@ export function MobileNav({ navItems, isLoggedIn }: NavProps) {
               </li>
             ))}
             {isLoggedIn && (
-              <li>
-                <NavLink
-                  href="/profile"
-                  onClick={() => onOpenChange(false)}
-                  variant="mobile"
-                >
-                  Profile
-                </NavLink>
-              </li>
+              <>
+                <li>
+                  <NavLink
+                    href="/profile"
+                    onClick={() => onOpenChange(false)}
+                    variant="mobile"
+                  >
+                    Profile
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    href="/dashboard"
+                    onClick={() => onOpenChange(false)}
+                    variant="mobile"
+                  >
+                    Dashboard
+                  </NavLink>
+                </li>
+              </>
             )}
           </ul>
         </nav>
