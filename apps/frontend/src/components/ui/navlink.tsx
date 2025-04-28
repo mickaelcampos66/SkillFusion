@@ -24,7 +24,7 @@ interface NavLinkProps extends LinkProps, VariantProps<typeof linkVariants> {
   children?: React.ReactNode
 }
 
-export function NavLink({ children, href, variant, ...props }: NavLinkProps) {
+function NavLink({ children, href, variant, ...props }: NavLinkProps) {
   const pathname = usePathname()
   return (
     <Link
@@ -37,3 +37,5 @@ export function NavLink({ children, href, variant, ...props }: NavLinkProps) {
     </Link>
   )
 }
+
+export { NavLink, linkVariants }
