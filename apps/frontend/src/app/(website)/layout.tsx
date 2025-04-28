@@ -1,17 +1,17 @@
 import { Header } from '@/components/layout/header'
 
-export default function RootLayout({
+export default function WebsiteLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
-    <div data-vaul-drawer-wrapper>
+    <div data-vaul-drawer-wrapper className="flex flex-col min-h-dvh">
       <Header />
-      <main data-wrapper className="flex flex-1 flex-col relative min-h-dvh bg-background">{children}</main>
+      <main data-wrapper className="flex flex-col flex-grow relative bg-background">{children}</main>
       <footer>
         <p className="text-secondary font-mono text-center">
-          © 2025 SkillFusion. Tous droits réservés.
+          © {new Date().getFullYear()} SkillFusion. Tous droits réservés.
         </p>
       </footer>
     </div>

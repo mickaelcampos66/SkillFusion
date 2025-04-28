@@ -13,6 +13,14 @@ const nextConfig: NextConfig = {
       'plus.unsplash.com',
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/dashboard',
+        destination: '/dashboard/courses',
+      },
+    ]
+  },
 }
 
 export default nextConfig

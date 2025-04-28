@@ -19,8 +19,8 @@ describe('Header', () => {
   it('n\'affiche pas les liens Connexion et Inscription si l\'utilisateur est connecté', async () => {
     jest.spyOn(sessionModule, 'getSession').mockResolvedValueOnce({
       id: 1,
-      firstname: 'John',
-      lastname: 'Doe',
+      firstName: 'John',
+      lastName: 'Doe',
       email: 'john.doe@example.com',
     })
 
