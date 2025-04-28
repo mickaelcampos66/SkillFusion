@@ -3,8 +3,8 @@ import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Req } from '@nestjs/common';
 import { Request } from 'express';
-import { JwtUtil } from 'src/utils/jwt.util';
-import { IVerifiedToken } from 'src/interface/IVerifiedToken';
+import { JwtUtil } from '../../utils/jwt.util';
+import { IVerifiedToken } from '../../interface/IVerifiedToken';
 import { ApiOperation, ApiResponse, ApiTags, ApiParam, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 
 
