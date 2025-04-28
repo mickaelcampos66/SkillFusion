@@ -15,7 +15,6 @@ async function main() {
 
   console.log('✅ Roles créés');
 
-  // 2. Création d'un utilisateur de test
   const hashedPassword = await bcrypt.hash('MegaMdp', 10);
   const user = await prisma.user.upsert({
     where: { email: 'john.doe@skillfusion.fr' },
@@ -69,6 +68,64 @@ Notre objectif est de rendre le bricolage accessible à tous, à distance, grâc
   });
 
   console.log('✅ Post de présentation du projet ajouté');
+
+  // 5. Création de cours de test
+  const courses = await prisma.course.createMany({
+    data: [
+      {
+        name: "Initiation à l'électricité",
+        description: "Apprenez les bases de l'électricité avec des projets pratiques.",
+        content: "Ce cours vous guidera à travers les différentes notions de base de l'électricité, y compris les circuits électriques simples et la sécurité.",
+        image: "https://plus.unsplash.com/premium_photo-1661911309991-cc81afcce97d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        level: "Débutant",
+        created_by: user.id,
+      },
+      {
+        name: "Plomberie pour débutants",
+        description: "Les bases de la plomberie pour vous permettre de réparer vos installations vous-même.",
+        content: "Ce cours couvre les outils essentiels, les tuyaux, les raccords, et les techniques de réparation courantes en plomberie.",
+        image: "https://plus.unsplash.com/premium_photo-1664301972519-506636f0245d?q=80&w=1796&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        level: "Débutant",
+        created_by: user.id,
+      },
+      {
+        name: "Menuiserie : Apprendre à travailler le bois",
+        description: "Les bases de la menuiserie pour créer des meubles simples et solides.",
+        content: "Ce cours vous apprendra à utiliser les outils de base pour couper, assembler et finir des pièces en bois.",
+        image: "https://plus.unsplash.com/premium_photo-1664300494539-313eac2a6095?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        level: "Débutant",
+        created_by: user.id,
+      },
+      {
+        name: "Initiation à l'outillage électroportatif",
+        description: "Apprenez à utiliser en toute sécurité les outils électroportatifs essentiels.",
+        content: "Ce cours vous initiera à l'utilisation correcte de la perceuse, de la ponceuse, de la scie sauteuse et d'autres outils indispensables pour vos projets de bricolage.",
+        image: "https://plus.unsplash.com/premium_photo-1663040335693-1f10c8221d7e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        level: "Débutant",
+        created_by: user.id,
+      },
+      {
+        name: "Peinture et décoration intérieure",
+        description: "Techniques de base pour peindre et décorer vos espaces intérieurs.",
+        content: "Ce cours vous enseignera à préparer les surfaces, choisir les bonnes peintures, et appliquer des finitions propres et durables.",
+        image: "https://media.istockphoto.com/id/1358054371/fr/photo/des-s%C5%93urs-jumelles-heureuses-peignant-des-murs-tout-en-emm%C3%A9nageant-dans-leur-nouvel.jpg?s=2048x2048&w=is&k=20&c=vnjeAu-mgo72LB7PNW7ua7XW9g8IKXyKqk77hcksDy8=",
+        level: "Débutant",
+        created_by: user.id,
+      },
+      {
+        name: "Apprendre la soudure pour débutants",
+        description: "Introduction aux techniques de base de la soudure.",
+        content: "Ce cours couvre les principes de la soudure à l'arc, la sécurité, et les premières réalisations métalliques simples.",
+        image: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        level: "Débutant",
+        created_by: user.id,
+      },
+    ],
+    skipDuplicates: true,
+  });
+
+  console.log('✅ Cours créés');
+
 }
 
 main()
