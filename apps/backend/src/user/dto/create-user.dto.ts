@@ -1,18 +1,35 @@
-import { IsEmail, IsInt, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, Length, Matches } from "class-validator";
+import { IsEmail, IsInt, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, Length, Matches } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserDto {
+  @ApiProperty({
+    description: 'User\'s first name',
+    example: 'John',
+  })
   @IsString()
   @IsNotEmpty()
   firstname: string;
 
+  @ApiProperty({
+    description: 'User\'s last name',
+    example: 'Doe',
+  })
   @IsString()
   @IsNotEmpty()
   lastname: string;
 
+  @ApiProperty({
+    description: 'User\'s email address',
+    example: 'john.doe@example.com',
+  })
   @IsEmail()
   @IsNotEmpty()
   email: string;
 
+  @ApiProperty({
+    description: 'User\'s password (Must contain uppercase, lowercase letters and digits)',
+    example: 'Password123',
+  })
   @IsString()
   @IsNotEmpty()
   @Length(6, 20)
@@ -21,14 +38,28 @@ export class CreateUserDto {
   @Matches(/[0-9]/, { message: 'Password must contain at least one number' })
   password: string;
 
+  @ApiProperty({
+    description: 'User\'s phone number (optional)',
+    example: '+33612345678',
+    required: false,
+  })
   @IsPhoneNumber('FR')
   @IsOptional()
   phone_number: string;
 
+  @ApiProperty({
+    description: 'User\'s address (optional)',
+    example: '123 Rue de Paris, 75001 Paris, France',
+    required: false,
+  })
   @IsString()
   @IsOptional()
   address: string;
 
+  @ApiProperty({
+    description: 'Role ID for the user (must be a valid integer)',
+    example: 1,
+  })
   @IsInt()
   @IsNotEmpty()
   role_id: number;
