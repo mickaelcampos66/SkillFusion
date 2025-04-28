@@ -1,11 +1,11 @@
 import * as bcrypt from 'bcryptjs';
 import { PrismaUser } from '../../type/prisma';
-import { ApiResponse } from 'src/common/ApiResponse';
-import { PrismaService } from 'src/prisma.service';
+import { ApiResponse } from '../../common/ApiResponse';
+import { PrismaService } from '../../prisma.service';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { IUserWithLinks } from '../../interface/IUser';
-import { PaginationLinksType } from 'src/type/PaginationLinksType';
+import { PaginationLinksType } from '../../type/PaginationLinksType';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
