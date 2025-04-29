@@ -17,8 +17,8 @@ export class JwtUtil {
   verify(token: string): IVerifiedToken {
     try {
       return this.jwtService.verify(token);
-    } catch (err) {
-      throw new Error('Invalid or expired token');
+    } catch (err: unknown) {
+      throw new Error(err instanceof Error ? err.message : JSON.stringify(err));
     }
   }
 }
