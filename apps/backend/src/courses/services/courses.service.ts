@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { UpdateCourseDto } from '../dto/update-course.dto';
 import { CourseDto } from '../dto/course.dto';
@@ -6,7 +6,7 @@ import { CreateCourseDto } from '../dto/create-course.dto';
 
 @Injectable()
 export class CoursesService {
-  constructor(private readonly PrismaService: PrismaService) {}
+  constructor(@Inject() private readonly PrismaService: PrismaService) {}
 
   async findAll(): Promise<Array<CourseDto>> {
     return this.PrismaService.course.findMany({});
