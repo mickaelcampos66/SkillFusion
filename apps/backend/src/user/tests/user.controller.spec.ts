@@ -2,7 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from '../services/user.service';
 import { JwtUtil } from '../../utils/jwt.util';
 import { UserController } from '../controllers/user.controller';
-import { mockUser, mockUserArray } from './user.mock';
+import {
+  mockUser,
+  mockUserArray,
+  mockUserWithLinks,
+  mockUserWithLinksArray,
+} from './user.mock';
 import { Request } from 'express';
 
 describe('UserController', () => {
@@ -17,11 +22,15 @@ describe('UserController', () => {
         {
           provide: UserService,
           useValue: {
-            create: jest.fn().mockResolvedValue({ data: mockUser }),
-            findAll: jest.fn().mockResolvedValue({ data: mockUserArray }),
-            findOne: jest.fn().mockResolvedValue({ data: mockUser }),
-            update: jest.fn().mockResolvedValue({ data: mockUser }),
-            remove: jest.fn().mockResolvedValue({ message: 'User deleted successfully' }),
+            create: jest.fn().mockResolvedValue({ data: mockUserWithLinks }),
+            findAll: jest
+              .fn()
+              .mockResolvedValue({ data: mockUserWithLinksArray }),
+            findOne: jest.fn().mockResolvedValue({ data: mockUserWithLinks }),
+            update: jest.fn().mockResolvedValue({ data: mockUserWithLinks }),
+            remove: jest
+              .fn()
+              .mockResolvedValue({ message: 'User deleted successfully' }),
           },
         },
         {
@@ -51,7 +60,11 @@ describe('UserController', () => {
 
   it('should find all users', async () => {
     const result = await controller.findAll('1', '25');
-    expect(result?.data.length).toBe(1);
+    if (Array.isArray(result?.data)) {
+      expect(result.data.length).toBe(1);
+    } else {
+      fail('Expected result.data to be an array');
+    }
     expect(userService.findAll).toHaveBeenCalled();
   });
 
@@ -76,7 +89,7 @@ describe('UserController', () => {
   it('should update a user', async () => {
     const dto = { firstname: 'UpdatedName' };
     const result = await controller.update('1', dto);
-    expect(result?.data.id).toEqual(1);
+    expect(result?.data?.id).toEqual(1);
     expect(userService.update).toHaveBeenCalledWith(1, dto);
   });
 

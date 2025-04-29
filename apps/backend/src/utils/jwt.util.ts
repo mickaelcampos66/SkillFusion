@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { IVerifiedToken } from 'src/interface/IVerifiedToken';
 
 @Injectable()
 export class JwtUtil {
@@ -13,7 +14,7 @@ export class JwtUtil {
     });
   }
 
-  verify(token: string): any {
+  verify(token: string): IVerifiedToken {
     try {
       return this.jwtService.verify(token);
     } catch (err) {

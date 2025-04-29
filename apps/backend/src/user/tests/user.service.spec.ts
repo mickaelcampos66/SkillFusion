@@ -50,7 +50,9 @@ describe('UserService', () => {
   it('should find one user', async () => {
     const result = await service.findOne(1);
     expect(result.data.id).toEqual(1);
-    expect(prismaService.user.findUnique).toHaveBeenCalledWith({ where: { id: 1 } });
+    expect(prismaService.user.findUnique).toHaveBeenCalledWith({
+      where: { id: 1 },
+    });
   });
 
   it('should create a user', async () => {
@@ -63,7 +65,7 @@ describe('UserService', () => {
   it('should update a user', async () => {
     const dto = { firstname: 'UpdatedName' };
     const result = await service.update(1, dto);
-    expect(result?.data.firstname).toEqual('John');
+    expect(result?.data?.firstname).toEqual('John');
     expect(prismaService.user.update).toHaveBeenCalled();
   });
 

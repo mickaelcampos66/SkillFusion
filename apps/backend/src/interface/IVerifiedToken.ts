@@ -1,4 +1,4 @@
-export interface IVerifiedToken{
+export interface IVerifiedToken {
   sub: number;
   firstName: string;
   lastName: string;

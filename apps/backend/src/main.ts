@@ -19,9 +19,9 @@ async function bootstrap() {
     origin: '*',
     methods: 'GET,POST,PUT,DELETE',
     allowedHeaders: 'Content-Type, Authorization',
-    credentials: true
+    credentials: true,
   });
-  
+
   const config = new DocumentBuilder()
     .setTitle('SkillFusion')
     .setDescription('The SkillFusion API description')
