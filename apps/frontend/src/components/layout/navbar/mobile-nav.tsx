@@ -7,6 +7,7 @@ import * as VisuallyHidden from '@radix-ui/react-visually-hidden'
 import {
   Drawer,
   DrawerContent,
+  DrawerDescription,
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer'
@@ -36,6 +37,7 @@ export function MobileNav({ navItems, isLoggedIn }: NavProps) {
           <DrawerTitle className="flex items-center justify-between p-4">
             Menu Mobile
           </DrawerTitle>
+          <DrawerDescription>menu mobile</DrawerDescription>
         </VisuallyHidden.Root>
         <nav className="overflow-auto p-6">
           <ul className="flex flex-col space-y-3">
@@ -58,7 +60,7 @@ export function MobileNav({ navItems, isLoggedIn }: NavProps) {
                     onClick={() => onOpenChange(false)}
                     variant="mobile"
                   >
-                    Profile
+                    Mon profile
                   </NavLink>
                 </li>
                 <li>
