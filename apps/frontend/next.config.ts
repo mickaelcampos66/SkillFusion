@@ -5,6 +5,14 @@ const nextConfig: NextConfig = {
   eslint: {
     dirs: ['<rootDir>'],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/dashboard',
+        destination: '/dashboard/courses',
+      },
+    ]
+  },
 }
 
 export default nextConfig

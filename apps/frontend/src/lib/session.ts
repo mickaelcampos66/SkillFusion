@@ -11,10 +11,12 @@ const EXPIRES_IN = Number.parseInt(env.EXPIRES_IN.split('d')[0])
 
 type JWTPayload = {
   id: number
-  firstname: string
-  lastname: string
+  firstName: string
+  lastName: string
   email: string
 }
+
+export type { JWTPayload as UserPayload }
 
 export async function createSession(session: RegisterUserResult) {
   const cookieStore = await cookies()
