@@ -24,6 +24,9 @@ jobs:
       - name: Run ESLint
         run: make lint-frontend
 
+      - name: Run Typescript check
+        run: make tsc-frontend
+
       - name: Run Tests
         run: make test-frontend-ci
 
