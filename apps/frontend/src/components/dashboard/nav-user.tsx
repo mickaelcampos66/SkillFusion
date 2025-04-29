@@ -77,16 +77,18 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <UserCircle2 />
+                <UserCircle2 strokeWidth={1.25} />
                 <Link href="/profile" className="w-full">
-                  Profile
+                  Mon profil
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <LogOut />
-              Déconnexion
+              <a href="/logout" className="w-full flex items-center gap-2">
+                <LogOut strokeWidth={1.25} />
+                Se déconnecter
+              </a>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

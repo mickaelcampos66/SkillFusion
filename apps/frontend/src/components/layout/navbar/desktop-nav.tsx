@@ -2,7 +2,7 @@
 
 import { linkVariants, NavLink } from '@/components/ui/navlink'
 import { NavProps } from '../header'
-import { UserCircle2 } from 'lucide-react'
+import { LayoutDashboard, LogOut, UserCircle2 } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,14 +35,23 @@ export function DesktopNav({ navItems, isLoggedIn }: NavProps) {
               <DropdownMenuLabel>Mon compte</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                <Link href="/profile" className="w-full">
+                <Link href="/profile" className="w-full flex items-center gap-2">
+                  <UserCircle2 strokeWidth={1.25} />
                   Mon profil
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Link href="/dashboard" className="w-full">
+                <Link href="/dashboard" className="w-full flex items-center gap-2">
+                  <LayoutDashboard strokeWidth={1.25} />
                   Dashboard
                 </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <a href="/logout" className="w-full flex items-center gap-2">
+                  <LogOut strokeWidth={1.25} />
+                  Se déconnecter
+                </a>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

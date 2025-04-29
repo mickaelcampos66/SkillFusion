@@ -6,6 +6,7 @@ loadEnvConfig(projectDir)
 
 const envSchema = z.object({
   SERVER_API_URL: z.string().url(),
+  WEB_ADDRESS: z.string().url(),
   EXPIRES_IN: z.string(),
   JWT_SECRET: z.string(),
 })
