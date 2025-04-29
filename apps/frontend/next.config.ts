@@ -21,14 +21,6 @@ const nextConfig: NextConfig = {
       },
     ]
   },
-  images: {
-    domains: [
-      'unsplash.com',
-      'media.istockphoto.com',
-      'images.unsplash.com',
-      'plus.unsplash.com',
-    ],
-  },
 }
 
 export default nextConfig
