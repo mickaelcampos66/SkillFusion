@@ -36,7 +36,7 @@ export function DesktopNav({ navItems, isLoggedIn }: NavProps) {
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <Link href="/profile" className="w-full">
-                  Profile
+                  Mon profil
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
