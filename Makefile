@@ -64,6 +64,9 @@ fixtures: ## Run database fixtures
 	@$(BACKEND_CONT) yarn seed
 
 ## —— Next.js Frontend 🧙‍♂️ ———————————————————————————————————————————————————————————————
+tsc-frontend: ## Run TypeScript check on the frontend
+	@$(DOCKER_RUN) frontend yarn tsc
+
 lint-frontend: ## Run ESLint on the frontend
 	@$(DOCKER_RUN) frontend yarn lint
 
