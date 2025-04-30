@@ -121,8 +121,9 @@ export class UserService {
         data: dto,
       });
 
+      const sanitizedUser = this.sanitizeUser(updated) as IUser;
       return new ApiResponse(
-        { ...this.sanitizeUser(updated), links: this.buildUserLinks(updated) },
+        { ...sanitizedUser, links: this.buildUserLinks(sanitizedUser) },
         undefined,
         'User updated successfully',
       );

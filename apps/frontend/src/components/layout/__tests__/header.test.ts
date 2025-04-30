@@ -22,6 +22,13 @@ describe('Header', () => {
       firstname: 'John',
       lastname: 'Doe',
       email: 'john.doe@example.com',
+      role_id: 1,
+      role: 'STUDENT',
+      address: null,
+      phone_number: null,
+      created_at: '2023-01-01T00:00:00Z',
+      updated_at: '2023-01-01T00:00:00Z',
+      accessToken: 'mockAccessToken',
     })
 
     render(await Header())

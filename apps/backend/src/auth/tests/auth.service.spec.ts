@@ -121,8 +121,8 @@ describe('AuthService', () => {
 
       expect(jwtSignMock).toHaveBeenCalledWith({
         sub: userData.id,
-        firstName: userData.firstname,
-        lastName: userData.lastname,
+        firstname: userData.firstname,
+        lastname: userData.lastname,
         email: userData.email,
         role: userData.role.name,
       });

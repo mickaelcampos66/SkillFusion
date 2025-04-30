@@ -105,8 +105,8 @@ export class AuthService {
   private createJwtPayload(userData: IUser) {
     return {
       sub: userData.id,
-      firstName: userData.firstname,
-      lastName: userData.lastname,
+      firstname: userData.firstname,
+      lastname: userData.lastname,
       email: userData.email,
       role: userData.role?.name,
     };
