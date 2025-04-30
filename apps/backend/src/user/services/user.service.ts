@@ -4,7 +4,6 @@ import { ApiResponse } from '../../common/ApiResponse';
 import { PrismaService } from '../../prisma.service';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { IUserWithLinks } from '../../interface/IUser';
 import { PaginationLinksType } from '../../type/PaginationLinksType';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 
@@ -26,15 +25,10 @@ export class UserService {
 
       const totalPages = Math.ceil(totalCount / limit);
 
-      const usersWithLinks: IUserWithLinks[] = users.map((user) => ({
-        ...user,
-        links: this.buildUserLinks(user),
-      }));
-
       const paginationLinks: PaginationLinksType = this.buildPaginationLinks('/users', page, limit, totalPages);
 
       return new ApiResponse(
-        this.sanitizeUser(usersWithLinks),
+        this.sanitizeUser(users),
         { page, limit, total_count: totalCount, total_pages: totalPages },
         'Users retrieved successfully',
         paginationLinks,
@@ -45,11 +39,11 @@ export class UserService {
   }
 
   async findOne(id: number) {
-    const user = await this.prisma.user.findUnique({ where: { id } });
+    const user = await this.prisma.user.findUnique({ where: { id }, include: { role: true } });
     if (!user) throw new NotFoundException(`User with id ${id} not found`);
 
     return new ApiResponse(
-      { ...this.sanitizeUser(user), links: this.buildUserLinks(user) },
+      { ...this.sanitizeUser(user) },
       undefined,
       `User ${id} retrieved successfully`,
     );
@@ -76,7 +70,7 @@ export class UserService {
       });
 
       return new ApiResponse(
-        { ...this.sanitizeUser(user), links: this.buildUserLinks(user) },
+        { ...this.sanitizeUser(user) },
         undefined,
         'User created successfully',
       );
@@ -94,7 +88,7 @@ export class UserService {
       });
 
       return new ApiResponse(
-        { ...this.sanitizeUser(updated), links: this.buildUserLinks(updated) },
+        { ...this.sanitizeUser(updated) },
         undefined,
         'User updated successfully',
       );
@@ -114,13 +108,6 @@ export class UserService {
     }
   }
 
-  private buildUserLinks(user: PrismaUser) {
-    return {
-      self: `/users/${user.id}`,
-      role: `/roles/${user.role_id}`,
-    };
-  }
-
   private buildPaginationLinks(baseUrl: string, page: number, limit: number, totalPages: number) {
     const buildLink = (p: number) => `${baseUrl}?page=${p}&limit=${limit}`;
     return {
@@ -136,7 +123,7 @@ export class UserService {
       return user.map(({ password, ...userWithoutPwd }) => userWithoutPwd);
     }
     const { password, ...userWithoutPwd } = user;
-    return userWithoutPwd;
+    return { ...userWithoutPwd, role: user.role?.name };
   }
 
   private handleError(error: unknown) {

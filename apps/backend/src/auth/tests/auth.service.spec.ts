@@ -96,8 +96,8 @@ describe('AuthService', () => {
 
     //   expect(jwtService.sign).toHaveBeenCalledWith({
     //     sub: 1,
-    //     firstName: 'John',
-    //     lastName: 'Doe',
+    //     firstname: 'John',
+    //     lastname: 'Doe',
     //     email: 'test@example.com',
     //     role: 'USER',
     //   });
@@ -178,8 +178,8 @@ describe('AuthService', () => {
 
       expect(jwtService.sign).toHaveBeenCalledWith({
         sub: userData.id,
-        firstName: userData.firstname,
-        lastName: userData.lastname,
+        firstname: userData.firstname,
+        lastname: userData.lastname,
         email: userData.email,
         role: userData.role.name,
       });

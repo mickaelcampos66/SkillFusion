@@ -9,18 +9,23 @@ import {
 } from '@/components/ui/sidebar'
 import { SidebarItem } from '@/constant/dashboard-sidebar'
 import { DynamicIcon } from '@/lib/dynamic-icon'
+import { type UserRole } from '@/types/user'
 import Link from 'next/link'
 
 export function NavMain({
   items,
+  role,
 }: {
   items: SidebarItem['navMain']
+  role: UserRole
 }) {
+  const filteredItems = items.filter(item => item.roles.includes(role))
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Espace</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map(item => (
+        {filteredItems.map(item => (
           <SidebarMenuItem key={item.title}>
             <SidebarMenuButton asChild>
               <Link href={item.url}>

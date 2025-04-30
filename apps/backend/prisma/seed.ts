@@ -4,13 +4,12 @@ import * as bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  const roles = await prisma.role.createMany({
+  await prisma.role.createMany({
     data: [
-      { id: 1, name: 'UTILISATEUR' },
-      { id: 2, name: 'APPRENANT' },
-      { id: 3, name: 'INSTRUCTEUR' },
+      { id: 1, name: 'STUDENT' },
+      { id: 2, name: 'TEACHER' },
+      { id: 3, name: 'ADMIN' },
     ],
-    skipDuplicates: true,
   });
 
   console.log('✅ Roles créés');
