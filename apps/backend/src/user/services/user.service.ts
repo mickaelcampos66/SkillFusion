@@ -1,17 +1,25 @@
 import * as bcrypt from 'bcryptjs';
-import { PrismaUser } from '../../type/prisma';
 import { ApiResponse } from '../../common/ApiResponse';
 import { PrismaService } from '../../prisma.service';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
+import { IUser, IUserWithLinks } from '../../interface/IUser';
 import { PaginationLinksType } from '../../type/PaginationLinksType';
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { IApiResponse } from 'src/interface/IApiResponse';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(page: number, limit: number) {
+  async findAll(
+    page: number,
+    limit: number,
+  ): Promise<IApiResponse<IUserWithLinks[]> | undefined> {
     try {
       const skip = (page - 1) * limit;
 
@@ -25,10 +33,23 @@ export class UserService {
 
       const totalPages = Math.ceil(totalCount / limit);
 
-      const paginationLinks: PaginationLinksType = this.buildPaginationLinks('/users', page, limit, totalPages);
+      const usersWithLinks: IUserWithLinks[] = users.map((user: IUser) => {
+        const sanitizedUser = this.sanitizeUser(user) as IUser;
+        return {
+          ...sanitizedUser,
+          links: this.buildUserLinks(sanitizedUser),
+        };
+      });
+
+      const paginationLinks: PaginationLinksType = this.buildPaginationLinks(
+        '/users',
+        page,
+        limit,
+        totalPages,
+      );
 
       return new ApiResponse(
-        this.sanitizeUser(users),
+        usersWithLinks,
         { page, limit, total_count: totalCount, total_pages: totalPages },
         'Users retrieved successfully',
         paginationLinks,
@@ -38,21 +59,26 @@ export class UserService {
     }
   }
 
-  async findOne(id: number) {
-    const user = await this.prisma.user.findUnique({ where: { id }, include: { role: true } });
+  async findOne(id: number): Promise<IApiResponse<IUserWithLinks>> {
+    const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) throw new NotFoundException(`User with id ${id} not found`);
 
+    const sanitizedUser = this.sanitizeUser(user) as IUser;
     return new ApiResponse(
-      { ...this.sanitizeUser(user) },
+      { ...sanitizedUser, links: this.buildUserLinks(user) },
       undefined,
       `User ${id} retrieved successfully`,
     );
   }
 
-  async create(dto: CreateUserDto) {
+  async create(
+    dto: CreateUserDto,
+  ): Promise<IApiResponse<IUserWithLinks> | undefined> {
     try {
-      const existingUser  = await this.prisma.user.findUnique({ where: { email: dto.email } });
-      if (existingUser ) {
+      const existingUser = await this.prisma.user.findUnique({
+        where: { email: dto.email },
+      });
+      if (existingUser) {
         throw new BadRequestException(`Email "${dto.email}" is already in use`);
       }
 
@@ -65,12 +91,15 @@ export class UserService {
           password: hashedPassword,
           phone_number: dto.phone_number ?? null,
           address: dto.address ?? null,
-          role: dto.role_id ? { connect: { id: dto.role_id } } : { connect: { id: 1 } },
+          role: dto.role_id
+            ? { connect: { id: dto.role_id } }
+            : { connect: { id: 1 } },
         },
       });
 
+      const sanitizedUser = this.sanitizeUser(user) as IUser;
       return new ApiResponse(
-        { ...this.sanitizeUser(user) },
+        { ...sanitizedUser, links: this.buildUserLinks(sanitizedUser) },
         undefined,
         'User created successfully',
       );
@@ -79,7 +108,12 @@ export class UserService {
     }
   }
 
-  async update(id: number, dto: UpdateUserDto) {
+  async update(
+    id: number,
+    dto: UpdateUserDto,
+  ): Promise<
+    IApiResponse<Omit<IUserWithLinks, 'password'> | undefined> | undefined
+  > {
     try {
       await this.findOne(id);
       const updated = await this.prisma.user.update({
@@ -87,8 +121,9 @@ export class UserService {
         data: dto,
       });
 
+      const sanitizedUser = this.sanitizeUser(updated) as IUser;
       return new ApiResponse(
-        { ...this.sanitizeUser(updated) },
+        { ...sanitizedUser, links: this.buildUserLinks(sanitizedUser) },
         undefined,
         'User updated successfully',
       );
@@ -102,13 +137,31 @@ export class UserService {
       await this.findOne(id);
       await this.prisma.user.delete({ where: { id } });
 
-      return new ApiResponse(undefined, undefined, `User ${id} deleted successfully`);
+      return new ApiResponse(
+        undefined,
+        undefined,
+        `User ${id} deleted successfully`,
+      );
     } catch (error) {
-      throw new BadRequestException(error instanceof Error ? error.message : JSON.stringify(error));
+      throw new BadRequestException(
+        error instanceof Error ? error.message : JSON.stringify(error),
+      );
     }
   }
 
-  private buildPaginationLinks(baseUrl: string, page: number, limit: number, totalPages: number) {
+  private buildUserLinks(user: IUser) {
+    return {
+      self: `/users/${user.id}`,
+      role: `/roles/${user.role_id}`,
+    };
+  }
+
+  private buildPaginationLinks(
+    baseUrl: string,
+    page: number,
+    limit: number,
+    totalPages: number,
+  ) {
     const buildLink = (p: number) => `${baseUrl}?page=${p}&limit=${limit}`;
     return {
       first: buildLink(1),
@@ -118,12 +171,16 @@ export class UserService {
     };
   }
 
-  private sanitizeUser(user: PrismaUser | PrismaUser[]) {
+  private sanitizeUser(user: IUser[]): Omit<IUser, 'password'>[];
+  private sanitizeUser(user: IUser): Omit<IUser, 'password'>;
+  private sanitizeUser(
+    user: IUser | IUser[],
+  ): Omit<IUser, 'password'>[] | Omit<IUser, 'password'> {
     if (Array.isArray(user)) {
-      return user.map(({ password, ...userWithoutPwd }) => userWithoutPwd);
+      return user.map(({ password: _, ...userWithoutPwd }) => userWithoutPwd);
     }
-    const { password, ...userWithoutPwd } = user;
-    return { ...userWithoutPwd, role: user.role?.name };
+    const { password: _, ...userWithoutPwd } = user;
+    return userWithoutPwd;
   }
 
   private handleError(error: unknown) {

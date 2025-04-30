@@ -1,10 +1,10 @@
-import { ICourseCategory } from "./ICourseCategory";
-import { IWithLinks } from "./IWithLinks";
+import { ICourseCategory } from './ICourseCategory';
+import { IWithLinks } from './IWithLinks';
 
 export interface ICategory {
-    id: number;
-    name: string;
-    courseCategories: ICourseCategory[];
+  id: number;
+  name: string;
+  courseCategories: ICourseCategory[];
 }
 
-export interface ICategoryWithLinks extends ICategory, IWithLinks { }
+export interface ICategoryWithLinks extends ICategory, IWithLinks {}
