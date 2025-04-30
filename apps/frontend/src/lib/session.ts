@@ -1,49 +1,86 @@
 import 'server-only'
-
 import { jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
-
 import { env } from '~/env.config'
 import { RegisterUserResult } from '@/actions/register-action'
+import { userDataSchema, UserResponse } from '@/types/user'
 
 const JWT_SECRET = new TextEncoder().encode(env.JWT_SECRET)
-const EXPIRES_IN = Number.parseInt(env.EXPIRES_IN.split('d')[0])
+const match = /^(\d+)d$/.exec(env.EXPIRES_IN)
+if (!match) throw new Error('ENV.EXPIRES_IN should be in the format "<number>d"')
+const EXPIRES_IN = Number(match[1])
 
-type JWTPayload = {
-  id: number
-  firstName: string
-  lastName: string
-  email: string
+type UserData = UserResponse['data']
+export interface SessionData extends UserData {
+  accessToken: string
 }
 
-export type { JWTPayload as UserPayload }
-
-export async function createSession(session: RegisterUserResult) {
+export async function createSession(session: RegisterUserResult): Promise<SessionData | null> {
   const cookieStore = await cookies()
 
-  cookieStore.set('session', JSON.stringify(session), {
+  let res: Response
+  try {
+    res = await fetch(`${env.SERVER_API_URL}/api/users/me`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${session.accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    })
+  }
+  catch (err) {
+    console.error('Error on network fetch user:', err)
+    return null
+  }
+
+  if (!res.ok) {
+    console.error('Error on API user', res.status, await res.text())
+    return null
+  }
+
+  let userData: UserResponse
+  try {
+    userData = await res.json()
+  }
+  catch (err) {
+    console.error('Invalid JSON:', err)
+    return null
+  }
+
+  try {
+    userDataSchema.parse(userData.data)
+  }
+  catch (error) {
+    console.error('Invalid user data:', error)
+    return null
+  }
+
+  const sessionData: SessionData = {
+    accessToken: session.accessToken,
+    ...userData.data,
+  }
+
+  cookieStore.set('session', JSON.stringify(sessionData), {
     httpOnly: true,
     secure: true,
     expires: new Date(Date.now() + 60 * 60 * 24 * EXPIRES_IN * 1000),
     sameSite: 'lax',
     path: '/',
   })
+
+  return sessionData
 }
 
-export async function getSession() {
+export async function getSession(): Promise<SessionData | null> {
   const cookieStore = await cookies()
   const session = cookieStore.get('session')
+  if (!session) return null
 
-  if (!session) {
-    return null
-  }
-
-  const parsedSession: RegisterUserResult = JSON.parse(session.value)
+  const parsedSession: SessionData = JSON.parse(session.value)
 
   try {
-    const { payload } = await jwtVerify(parsedSession.accessToken, JWT_SECRET)
-
-    return payload as JWTPayload
+    await jwtVerify(parsedSession.accessToken, JWT_SECRET)
+    return parsedSession
   }
   catch (error) {
     console.error('Error verifying JWT:', error)

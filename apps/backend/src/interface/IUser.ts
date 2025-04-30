@@ -18,5 +18,3 @@ export interface IUser {
     messages?: IMessage[];
     courses?: ICourse[];
 }
-  
-export interface IUserWithLinks extends IUser, IWithLinks {}

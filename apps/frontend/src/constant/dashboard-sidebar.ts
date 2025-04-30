@@ -1,4 +1,5 @@
 import { IconComponentName } from '@/lib/dynamic-icon'
+import { type UserRole } from '@/types/user'
 
 export type SidebarItem = {
   views: {
@@ -10,6 +11,7 @@ export type SidebarItem = {
     title: string
     url: string
     icon: IconComponentName
+    roles: UserRole[]
   }[]
 }
 
@@ -27,23 +29,23 @@ export const data: SidebarItem = {
     },
   ],
   navMain: [
-    // TODO: add verification for user role
-    // Student
     {
       title: 'Cours suivis',
       url: '/dashboard/courses',
-      icon: 'BookOpen',
+      icon: 'BookOpenCheck',
+      roles: ['STUDENT', 'TEACHER'],
     },
-    // Teacher
     {
       title: 'Mes cours',
-      url: '/dashboard/courses',
+      url: '/dashboard/my-courses',
       icon: 'BookOpen',
+      roles: ['TEACHER'],
     },
     {
       title: 'Créer un cours',
       url: '/dashboard/courses/create',
       icon: 'FilePlus2',
+      roles: ['TEACHER'],
     },
   ],
 }

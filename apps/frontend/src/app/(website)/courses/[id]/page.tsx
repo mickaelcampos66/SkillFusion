@@ -1,10 +1,10 @@
-import { Course } from '@/interfaces/course'
 import Image from 'next/image'
 import NotFound from './not-found'
 import { env } from '~/env.config'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
+import { Course } from '@/types/course'
 
 type Props = {
   params: { id: string }

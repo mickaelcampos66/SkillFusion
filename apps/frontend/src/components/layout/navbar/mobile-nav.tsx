@@ -12,8 +12,9 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer'
 import { Icons } from '@/components/ui/icons'
-import { NavLink } from '@/components/ui/navlink'
+import { linkVariants, NavLink } from '@/components/ui/navlink'
 import { NavProps } from '../header'
+import { Separator } from '@/components/ui/separator'
 
 export function MobileNav({ navItems, isLoggedIn }: NavProps) {
   const [open, setOpen] = React.useState(false)
@@ -71,6 +72,17 @@ export function MobileNav({ navItems, isLoggedIn }: NavProps) {
                   >
                     Dashboard
                   </NavLink>
+                </li>
+                <Separator />
+                <li>
+                  <a
+                    href="/logout"
+                    onClick={() => onOpenChange(false)}
+
+                    className={linkVariants({ variant: 'mobile' })}
+                  >
+                    Se déconnecter
+                  </a>
                 </li>
               </>
             )}

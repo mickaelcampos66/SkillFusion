@@ -1,7 +1,7 @@
-export interface IVerifiedToken{
+export interface IVerifiedToken {
   sub: number;
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
   email: string;
   role: string;
   iat: number;

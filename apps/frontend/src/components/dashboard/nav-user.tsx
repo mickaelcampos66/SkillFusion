@@ -26,13 +26,13 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
-import { UserPayload } from '@/lib/session'
 import Link from 'next/link'
+import { SessionData } from '@/lib/session'
 
 export function NavUser({
   user,
 }: {
-  user: UserPayload
+  user: SessionData
 }) {
   const { isMobile } = useSidebar()
 
@@ -46,11 +46,11 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={`https://api.dicebear.com/9.x/micah/svg?seed=${new TextEncoder().encode(user.email)}`} alt={user.firstName} />
+                <AvatarImage src={`https://api.dicebear.com/9.x/micah/svg?seed=${new TextEncoder().encode(user.email)}`} alt={user.firstname} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.firstName} {user.lastName}</span>
+                <span className="truncate font-medium">{user.firstname} {user.lastname}</span>
                 <span className="truncate text-xs">{user.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
@@ -65,11 +65,11 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={`https://api.dicebear.com/9.x/micah/svg?seed=${new TextEncoder().encode(user.email)}`} alt={user.firstName} />
-                  <AvatarFallback className="rounded-lg">{user.firstName.charAt(0)} {user.lastName.charAt(0)}</AvatarFallback>
+                  <AvatarImage src={`https://api.dicebear.com/9.x/micah/svg?seed=${new TextEncoder().encode(user.email)}`} alt={user.firstname} />
+                  <AvatarFallback className="rounded-lg">{user.firstname.charAt(0)} {user.lastname.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.firstName} {user.lastName}</span>
+                  <span className="truncate font-medium">{user.firstname} {user.lastname}</span>
                   <span className="truncate text-xs">{user.email}</span>
                 </div>
               </div>
@@ -77,16 +77,18 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <UserCircle2 />
+                <UserCircle2 strokeWidth={1.25} />
                 <Link href="/profile" className="w-full">
-                  Profile
+                  Mon profil
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <LogOut />
-              Déconnexion
+              <a href="/logout" className="w-full flex items-center gap-2">
+                <LogOut strokeWidth={1.25} />
+                Se déconnecter
+              </a>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

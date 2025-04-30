@@ -16,13 +16,17 @@ import { NavMain } from './nav-main'
 export async function DashboardSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const user = await getSession()
 
+  if (!user) {
+    return null
+  }
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <ViewSwitcher views={data.views} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={data.navMain} role={user.role} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user!} />

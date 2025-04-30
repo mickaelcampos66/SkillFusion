@@ -1,8 +1,8 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
-import { Course } from '@/interfaces/course'
 import Link from 'next/link'
+import { Course } from '@/types/course'
 
 export function CourseCard({ id, name, description, image }: Course) {
   return (

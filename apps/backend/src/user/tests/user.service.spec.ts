@@ -50,7 +50,7 @@ describe('UserService', () => {
   it('should find one user', async () => {
     const result = await service.findOne(1);
     expect(result.data.id).toEqual(1);
-    expect(prismaService.user.findUnique).toHaveBeenCalledWith({ where: { id: 1 } });
+    expect(prismaService.user.findUnique).toHaveBeenCalledWith({ where: { id: 1 }, include: { role: true } });
   });
 
   it('should create a user', async () => {

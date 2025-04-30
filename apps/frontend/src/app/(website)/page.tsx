@@ -1,5 +1,5 @@
 import { CourseCard } from '@/components/course-card'
-import { Course } from '@/interfaces/course'
+import { Course } from '@/types/course'
 import Image from 'next/image'
 
 const getCoursesData = async () => {

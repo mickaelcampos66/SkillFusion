@@ -37,5 +37,6 @@ describe('DesktopNav', () => {
     expect(dropdownLabel).toBeInTheDocument()
     expect(screen.getByText('Mon profil')).toBeInTheDocument()
     expect(screen.getByText('Dashboard')).toBeInTheDocument()
+    expect(screen.getByText('Se déconnecter')).toBeInTheDocument()
   })
 })
