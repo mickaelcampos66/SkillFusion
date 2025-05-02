@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
 import { IApiResponse } from 'src/interface/IApiResponse';
@@ -10,8 +10,19 @@ import { ApiResponse } from 'src/common/ApiResponse';
 export class PostService {
   constructor(private readonly prisma: PrismaService) { }
 
-  create(createPostDto: CreatePostDto) {
-    return 'This action adds a new post';
+  async create(createPostDto: CreatePostDto): Promise<IApiResponse<IPost> | undefined> {
+    try {
+      const post = await this.prisma.post.create({
+        data: createPostDto,
+      });
+      return new ApiResponse(
+        post,
+        undefined,
+        'Post created successfully',
+      );
+    } catch (error: unknown) {
+      this.handleError(error);
+    }
   }
 
   async findAll(page: number, limit: number): Promise<IApiResponse<IPostWithLinks[]> | undefined> {
@@ -45,22 +56,49 @@ export class PostService {
         paginationLinks,
       );
     } catch (error: unknown) {
-      {
-        this.handleError(error);
-      }
+      this.handleError(error);
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  async findOne(id: number): Promise<IApiResponse<IPostWithLinks> | undefined> {
+    try {
+      const post = await this.prisma.post.findUnique({
+        where: { id },
+      });
+      if (!post) {
+        throw new NotFoundException(`Post with ID ${id} not found`);
+      }
+      return new ApiResponse(
+        {
+          ...post,
+          links: this.buildPostLinks(post),
+        },
+        undefined,
+        `Post ${id} retrieved successfully`,
+      );
+    } catch (error: unknown) {
+      this.handleError(error);
+    }
   }
 
   update(id: number, updatePostDto: UpdatePostDto) {
     return `This action updates a #${id} post`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async remove(id: number) {
+    try {
+      await this.findOne(id);
+      const post = await this.prisma.post.delete({
+        where: { id },
+      });
+      return new ApiResponse(
+        undefined,
+        undefined,
+        `Post ${id} deleted successfully`,
+      );
+    } catch (error: unknown) {
+      this.handleError(error);
+    }
   }
 
   private buildPostLinks(post: IPost) {
