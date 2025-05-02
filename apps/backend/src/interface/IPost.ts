@@ -6,11 +6,11 @@ export interface IPost {
   id: number;
   title: string;
   content: string;
-  created_at?: Date | null;
-  updated_at?: Date | null;
+  created_at: Date;
+  updated_at: Date;
   user_id: number;
-  user: IUser;
-  messages: IMessage[];
+  user?: IUser;
+  messages?: IMessage[];
 }
 
 export interface IPostWithLinks extends IPost, IWithLinks {}
