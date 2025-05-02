@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { PostService } from '../services/post.service';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
@@ -44,8 +44,10 @@ export class PostController {
     status: 500,
     description: 'Internal Server Error',
   })
-  async findAll() {
-    return await this.postService.findAll();
+  async findAll(@Query('page') page: string, @Query('limit') limit: string) {
+    const pageNumber = parseInt(page) || 1;
+    const limitNumber = parseInt(limit) || 25;
+    return await this.postService.findAll(pageNumber, limitNumber); 
   }
 
   @Get(':id')
