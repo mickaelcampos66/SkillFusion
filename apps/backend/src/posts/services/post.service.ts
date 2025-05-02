@@ -81,8 +81,24 @@ export class PostService {
     }
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async update(id: number, updatePostDto: UpdatePostDto) {
+    try {
+      await this.findOne(id);
+      const post = await this.prisma.post.update({
+        where: { id },
+        data: updatePostDto,
+      });
+      return new ApiResponse(
+        {
+          ...post,
+          links: this.buildPostLinks(post),
+        },
+        undefined,
+        `Post ${id} updated successfully`,
+      );
+    } catch (error) {
+      this.handleError(error);
+    }
   }
 
   async remove(id: number) {

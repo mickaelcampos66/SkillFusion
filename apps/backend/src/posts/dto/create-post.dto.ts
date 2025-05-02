@@ -25,11 +25,4 @@ export class CreatePostDto {
     @IsNumber()
     @IsNotEmpty()
     user_id: number
-
-    @IsDate()
-    @ApiProperty({
-        description: 'The date when the post was created',
-        example: '2023-01-01T00:00:00Z',
-    })
-    created_at: Date
 }
