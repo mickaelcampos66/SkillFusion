@@ -60,7 +60,7 @@ export class UserService {
   }
 
   async findOne(id: number): Promise<IApiResponse<IUserWithLinks>> {
-    const user = await this.prisma.user.findUnique({ where: { id } });
+    const user = await this.prisma.user.findUnique({ where: { id }, include: { role: true } });
     if (!user) throw new NotFoundException(`User with id ${id} not found`);
 
     const sanitizedUser = this.sanitizeUser(user) as IUser;
