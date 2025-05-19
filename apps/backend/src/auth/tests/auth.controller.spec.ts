@@ -15,7 +15,15 @@ describe('AuthController', () => {
         {
           provide: AuthService,
           useValue: {
-            register: jest.fn(),
+            register: jest.fn(() => {
+              return {
+                message: 'User registered successfully',
+                id: 1,
+                firstname: 'John',
+                lastname: 'Doe',
+                accessToken: 'fake-jwt-token',
+              };
+            }),
           },
         },
       ],
@@ -42,14 +50,18 @@ describe('AuthController', () => {
 
       const registerResult = {
         message: 'User registered successfully',
-        userId: 1,
+        id: 1,
+        firstname: 'John',
+        lastname: 'Doe',
+        accessToken: 'fake-jwt-token',
       };
 
-      authService.register = jest.fn().mockResolvedValue(registerResult);
-
+      const registerSpy = jest
+        .spyOn(authService, 'register')
+        .mockResolvedValue(registerResult);
       const result = await authController.register(dto);
 
-      expect(authService.register).toHaveBeenCalledWith(dto);
+      expect(registerSpy).toHaveBeenCalledWith(dto);
       expect(result).toEqual(registerResult);
     });
 
@@ -64,14 +76,14 @@ describe('AuthController', () => {
       };
 
       const error = new BadRequestException('Email already in use');
-      authService.register = jest.fn().mockRejectedValue(error);
+      jest.spyOn(authService, 'register').mockRejectedValue(error);
 
-      try {
-        await authController.register(dto);
-      } catch (e) {
-        expect(e).toBeInstanceOf(BadRequestException);
-        expect(e.message).toBe('Email already in use');
-      }
+      await expect(authController.register(dto)).rejects.toThrow(
+        BadRequestException,
+      );
+      await expect(authController.register(dto)).rejects.toThrow(
+        'Email already in use',
+      );
     });
   });
 });

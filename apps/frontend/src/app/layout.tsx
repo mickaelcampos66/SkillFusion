@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import { Geist_Mono, Montserrat } from 'next/font/google'
 import { cn } from '@/lib/utils'
 import './globals.css'
-import { Header } from '@/components/layout/header'
 
 const montserrat = Montserrat({
   variable: '--font-montserrat',
@@ -29,15 +28,7 @@ export default function RootLayout({
       <body
         className={cn('bg-background font-sans antialiased', montserrat.variable, geistMono.variable)}
       >
-        <div data-vaul-drawer-wrapper>
-          <Header />
-          <main data-wrapper className="flex flex-1 flex-col relative min-h-dvh bg-background">{children}</main>
-          <footer>
-            <p className="text-secondary font-mono text-center">
-              © 2025 SkillFusion. Tous droits réservés.
-            </p>
-          </footer>
-        </div>
+        {children}
       </body>
     </html>
   )

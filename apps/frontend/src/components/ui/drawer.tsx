@@ -71,6 +71,19 @@ function DrawerTitle({
   )
 }
 
+function DrawerDescription({
+  className,
+  ...props
+}: React.ComponentProps<typeof DrawerPrimitive.Description>) {
+  return (
+    <DrawerPrimitive.Description
+      data-slot="drawer-description"
+      className={cn('text-sm text-muted-foreground', className)}
+      {...props}
+    />
+  )
+}
+
 export {
   Drawer,
   DrawerPortal,
@@ -78,4 +91,5 @@ export {
   DrawerTrigger,
   DrawerContent,
   DrawerTitle,
+  DrawerDescription,
 }

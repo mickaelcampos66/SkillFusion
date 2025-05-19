@@ -2,11 +2,25 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { MobileNav } from './navbar/mobile-nav'
 import { DesktopNav } from './navbar/desktop-nav'
+import { getSession } from '@/lib/session'
+import { NavItem, navItems } from '@/constant/nav'
 
-export function Header() {
+export type NavProps = {
+  navItems: NavItem[]
+  isLoggedIn: boolean
+}
+
+export async function Header() {
+  const session = await getSession()
+  const isLoggedIn = !!session
+
+  const filteredNavItems: NavItem[] = isLoggedIn
+    ? navItems.filter(item => item.title !== 'Connexion' && item.title !== 'Inscription')
+    : navItems
+
   return (
     <header className="sticky top-0 z-50 w-full bg-secondary">
-      <div className="container-wrapper flex justify-between w-full h-14 px-3 items-center gap-2 md:gap-4">
+      <div className="container flex justify-between w-full h-14 items-center gap-2 md:gap-4">
         <Link
           href="/"
           rel="noreferrer"
@@ -20,8 +34,8 @@ export function Header() {
           />
           <span className="sr-only">Accueil</span>
         </Link>
-        <DesktopNav />
-        <MobileNav />
+        <DesktopNav navItems={filteredNavItems} isLoggedIn={isLoggedIn} />
+        <MobileNav navItems={filteredNavItems} isLoggedIn={isLoggedIn} />
       </div>
     </header>
   )

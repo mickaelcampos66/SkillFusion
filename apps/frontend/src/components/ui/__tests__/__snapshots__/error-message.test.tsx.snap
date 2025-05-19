@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ErrorMessage should matches snapshot with children 1`] = `
+<DocumentFragment>
+  <div
+    class="grid transition-all grid-rows-[1fr]"
+  >
+    <div
+      aria-hidden="false"
+      class="overflow-hidden text-sm text-destructive"
+    >
+      <span>
+        Test Error
+      </span>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`ErrorMessage should matches snapshot without children 1`] = `
+<DocumentFragment>
+  <div
+    class="grid transition-all grid-rows-[0fr]"
+  >
+    <div
+      aria-hidden="true"
+      class="overflow-hidden text-sm text-destructive"
+    />
+  </div>
+</DocumentFragment>
+`;

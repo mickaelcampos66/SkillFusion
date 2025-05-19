@@ -64,14 +64,18 @@ fixtures: ## Run database fixtures
 	@$(BACKEND_CONT) yarn seed
 
 ## —— Next.js Frontend 🧙‍♂️ ———————————————————————————————————————————————————————————————
+tsc-frontend: ## Run TypeScript check on the frontend
+	@$(DOCKER_RUN) frontend yarn tsc
+
 lint-frontend: ## Run ESLint on the frontend
 	@$(DOCKER_RUN) frontend yarn lint
 
 lint-fix-frontend: ## Run ESLint on the frontend and fix errors
 	@$(FRONTEND_CONT) yarn lint:fix
 
-test-frontend: ## Run tests on the frontend
-	@$(FRONTEND_CONT) yarn test
+test-frontend: ## Run tests on the frontend, pass the parameter "c=" to run a specific test, example: make test-frontend c=-u (to update snapshots)
+	@$(eval c ?=)
+	@$(FRONTEND_CONT) yarn test $(c)
 
 test-frontend-watch: ## Run tests on the frontend in watch mode
 	@$(FRONTEND_CONT) yarn test:watch
