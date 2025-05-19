@@ -10,6 +10,7 @@ async function main() {
       { id: 2, name: 'TEACHER' },
       { id: 3, name: 'ADMIN' },
     ],
+    skipDuplicates: true,
   });
 
   console.log('✅ Roles créés');
