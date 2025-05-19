@@ -6,11 +6,11 @@ const nextConfig: NextConfig = {
     dirs: ['<rootDir>'],
   },
   images: {
-    domains: [
-      'unsplash.com',
-      'media.istockphoto.com',
-      'images.unsplash.com',
-      'plus.unsplash.com',
+    remotePatterns: [
+      { hostname: 'unsplash.com' },
+      { hostname: 'media.istockphoto.com' },
+      { hostname: 'images.unsplash.com' },
+      { hostname: 'plus.unsplash.com' },
     ],
   },
   async rewrites() {

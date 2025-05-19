@@ -10,6 +10,7 @@ export default async function DashboardLayout({
   children: React.ReactNode
 }>) {
   const user = await getSession()
+
   if (!user) {
     return (
       <main className="container flex flex-col items-center gap-8">

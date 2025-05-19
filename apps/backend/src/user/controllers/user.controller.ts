@@ -1,20 +1,36 @@
 import { UserService } from '../services/user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { JwtUtil } from '../../utils/jwt.util';
 import { IVerifiedToken } from '../../interface/IVerifiedToken';
-import { ApiOperation, ApiResponse, ApiTags, ApiParam, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
-
+import {
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiParam,
+  ApiQuery,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
 @ApiTags('Users')
 @Controller('users')
 export class UserController {
   constructor(
     private readonly userService: UserService,
-    private readonly jwtUtil: JwtUtil
-  ) {}
+    private readonly jwtUtil: JwtUtil,
+  ) { }
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
@@ -50,10 +66,7 @@ export class UserController {
     status: 200,
     description: 'List of users',
   })
-  async findAll(
-    @Query('page') page: string,
-    @Query('limit') limit: string
-  ) {
+  async findAll(@Query('page') page: string, @Query('limit') limit: string) {
     const pageNumber = parseInt(page) || 1;
     const limitNumber = parseInt(limit) || 25;
     return this.userService.findAll(pageNumber, limitNumber);
@@ -76,8 +89,14 @@ export class UserController {
     const token = authorization.split(' ')[1];
     if (!token) throw new Error('Token not found');
 
-    const user: IVerifiedToken = this.jwtUtil.verify(token);
-    return this.userService.findOne(+user.sub);
+    const tokenData: IVerifiedToken = this.jwtUtil.verify(token);
+    const userData = await this.userService.findOne(+tokenData.sub);
+    const { role, ...rest } = userData.data;
+    const cleanedData = {
+      ...rest,
+      role: role?.name
+    };
+    return { data: cleanedData };
   }
 
   @Get(':id')

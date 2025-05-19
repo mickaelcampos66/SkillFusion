@@ -28,7 +28,8 @@ export class CourseDto {
 
   @ApiProperty({
     description: 'The main content or syllabus of the course',
-    example: 'Module 1: Introduction\nModule 2: Basic Setup\nModule 3: Advanced Topics',
+    example:
+      'Module 1: Introduction\nModule 2: Basic Setup\nModule 3: Advanced Topics',
   })
   @IsString()
   @IsNotEmpty()
@@ -59,7 +60,8 @@ export class CourseDto {
   updated_at: Date | null;
 
   @ApiProperty({
-    description: 'The level of the course (e.g., Beginner, Intermediate, Advanced)',
+    description:
+      'The level of the course (e.g., Beginner, Intermediate, Advanced)',
     example: 'Intermediate',
   })
   @IsString()
@@ -73,5 +75,4 @@ export class CourseDto {
   @IsNumber()
   @IsNotEmpty()
   created_by: number;
-
 }

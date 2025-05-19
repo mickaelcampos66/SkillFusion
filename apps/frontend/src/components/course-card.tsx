@@ -1,9 +1,10 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
-import { Course } from '@/interfaces/course'
+import Link from 'next/link'
+import { Course } from '@/types/course'
 
-export function CourseCard({ name, description, image }: Course) {
+export function CourseCard({ id, name, description, image }: Course) {
   return (
     <Card className="h-full w-full sm:w-[300px] rounded-2xl overflow-hidden shadow-md flex flex-col">
       <Image
@@ -18,9 +19,11 @@ export function CourseCard({ name, description, image }: Course) {
           <h2 className="text-lg font-semibold mb-2">{name}</h2>
           <p className="text-sm text-gray-600">{description}</p>
         </div>
-        <Button className="mt-4 w-full" variant="outline">
-          Voir le cours
-        </Button>
+        <Link key={id} href={`/courses/${id}`}>
+          <Button className="mt-4 w-full" variant="outline">
+            Voir le cours
+          </Button>
+        </Link>
       </CardContent>
     </Card>
   )

@@ -2,13 +2,17 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from '../services/user.service';
 import { JwtUtil } from '../../utils/jwt.util';
 import { UserController } from '../controllers/user.controller';
-import { mockUser, mockUserArray } from './user.mock';
+import {
+  mockUser,
+  mockUserArray,
+  mockUserWithLinks,
+  mockUserWithLinksArray,
+} from './user.mock';
 import { Request } from 'express';
 
 describe('UserController', () => {
   let controller: UserController;
   let userService: UserService;
-  let jwtUtil: JwtUtil;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -21,7 +25,9 @@ describe('UserController', () => {
             findAll: jest.fn().mockResolvedValue({ data: mockUserArray }),
             findOne: jest.fn().mockResolvedValue({ data: mockUser }),
             update: jest.fn().mockResolvedValue({ data: mockUser }),
-            remove: jest.fn().mockResolvedValue({ message: 'User deleted successfully' }),
+            remove: jest
+              .fn()
+              .mockResolvedValue({ message: 'User deleted successfully' }),
           },
         },
         {
@@ -35,7 +41,11 @@ describe('UserController', () => {
 
     controller = module.get<UserController>(UserController);
     userService = module.get<UserService>(UserService);
-    jwtUtil = module.get<JwtUtil>(JwtUtil);
+    jest.spyOn(userService, 'create');
+    jest.spyOn(userService, 'findAll');
+    jest.spyOn(userService, 'findOne');
+    jest.spyOn(userService, 'update');
+    jest.spyOn(userService, 'remove');
   });
 
   it('should be defined', () => {
@@ -44,24 +54,46 @@ describe('UserController', () => {
 
   it('should create a user', async () => {
     const dto = { ...mockUser, password: 'password' };
+
+    const createSpy = jest.spyOn(userService, 'create').mockResolvedValue({
+      data: mockUserWithLinks,
+      message: 'User created successfully',
+    });
+
     const result = await controller.create(dto);
-    expect(result?.data.email).toEqual(mockUser.email);
-    expect(userService.create).toHaveBeenCalledWith(dto);
+    expect(result?.data.email).toEqual(mockUserWithLinks.email);
+    expect(result?.data.links).toBeDefined();
+    expect(result?.data.links.self).toBe('/users/1');
+    expect(result?.message).toBe('User created successfully');
+
+    expect(createSpy).toHaveBeenCalledWith(dto);
   });
 
   it('should find all users', async () => {
+    const findAllSpy = jest.spyOn(userService, 'findAll').mockResolvedValue({
+      data: mockUserWithLinksArray,
+      message: 'Users retrieved successfully',
+    });
     const result = await controller.findAll('1', '25');
     expect(result?.data.length).toBe(1);
-    expect(userService.findAll).toHaveBeenCalled();
+    expect(findAllSpy).toHaveBeenCalled();
   });
 
   it('should find one user', async () => {
+    const findOneSpy = jest.spyOn(userService, 'findOne').mockResolvedValue({
+      data: mockUserWithLinks,
+      message: 'User retrieved successfully',
+    });
     const result = await controller.findOne('1');
     expect(result.data.id).toEqual(1);
-    expect(userService.findOne).toHaveBeenCalledWith(1);
+    expect(findOneSpy).toHaveBeenCalledWith(1);
   });
 
   it('should find current user (me)', async () => {
+    const findMeSpy = jest.spyOn(userService, 'findOne').mockResolvedValue({
+      data: mockUserWithLinks,
+      message: 'User retrieved successfully',
+    });
     const mockRequest = {
       headers: {
         authorization: 'Bearer faketoken',
@@ -70,19 +102,27 @@ describe('UserController', () => {
 
     const result = await controller.findMe(mockRequest);
     expect(result.data.id).toEqual(1);
-    expect(userService.findOne).toHaveBeenCalledWith(1);
+    expect(findMeSpy).toHaveBeenCalledWith(1);
   });
 
   it('should update a user', async () => {
+    const updateSpy = jest.spyOn(userService, 'update').mockResolvedValue({
+      data: mockUserWithLinks,
+      message: 'User updated successfully',
+    });
     const dto = { firstname: 'UpdatedName' };
     const result = await controller.update('1', dto);
-    expect(result?.data.id).toEqual(1);
-    expect(userService.update).toHaveBeenCalledWith(1, dto);
+    expect(result?.data?.id).toEqual(1);
+    expect(updateSpy).toHaveBeenCalledWith(1, dto);
   });
 
   it('should delete a user', async () => {
+    const deleteSpy = jest.spyOn(userService, 'remove').mockResolvedValue({
+      data: undefined,
+      message: 'User deleted successfully',
+    });
     const result = await controller.remove('1');
     expect(result.message).toContain('deleted successfully');
-    expect(userService.remove).toHaveBeenCalledWith(1);
+    expect(deleteSpy).toHaveBeenCalledWith(1);
   });
 });
