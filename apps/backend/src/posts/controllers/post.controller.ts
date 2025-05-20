@@ -84,6 +84,10 @@ export class PostController {
     description: 'Bad Request',
   })
   @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  @ApiResponse({
     status: 404,
     description: 'Post not found',
   })
@@ -101,6 +105,10 @@ export class PostController {
   @ApiResponse({
     status: 200,
     description: 'Post deleted successfully',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
   })
   @ApiResponse({
     status: 404,
