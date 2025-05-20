@@ -4,9 +4,16 @@ import { UserModule } from './user/modules/user.module';
 import { CoursesModule } from './courses/modules/courses.module';
 
 import { CategoriesModule } from './categories/modules/categories.module';
+import { HealthChkModule } from './healthchk/modules/healthchk.module';
 
 @Module({
-  imports: [AuthModule, UserModule, CoursesModule, HealthChkModule, CategoriesModule],
+  imports: [
+    AuthModule,
+    UserModule,
+    CoursesModule,
+    HealthChkModule,
+    CategoriesModule,
+  ],
 
   controllers: [],
   providers: [],
