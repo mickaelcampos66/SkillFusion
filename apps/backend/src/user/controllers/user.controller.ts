@@ -30,7 +30,7 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly jwtUtil: JwtUtil,
-  ) {}
+  ) { }
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
@@ -89,8 +89,14 @@ export class UserController {
     const token = authorization.split(' ')[1];
     if (!token) throw new Error('Token not found');
 
-    const user: IVerifiedToken = this.jwtUtil.verify(token);
-    return this.userService.findOne(+user.sub);
+    const tokenData: IVerifiedToken = this.jwtUtil.verify(token);
+    const userData = await this.userService.findOne(+tokenData.sub);
+    const { role, ...rest } = userData.data;
+    const cleanedData = {
+      ...rest,
+      role: role?.name
+    };
+    return { data: cleanedData };
   }
 
   @Get(':id')
