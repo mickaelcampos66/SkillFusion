@@ -1,13 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Req } from '@nestjs/common';
 import { PostService } from '../services/post.service';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 
 @ApiTags('Posts')
 @Controller('posts')
 export class PostController {
-  constructor(private readonly postService: PostService) {}
+  constructor(
+    private readonly postService: PostService
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new post' })
@@ -70,6 +73,7 @@ export class PostController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update a post by ID' })
   @ApiResponse({
     status: 200,
@@ -87,11 +91,12 @@ export class PostController {
     status: 500,
     description: 'Internal Server Error',
   })
-  async update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return await this.postService.update(+id, updatePostDto);
+  async update(@Req() request: Request, @Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
+    return await this.postService.update(request, +id, updatePostDto);
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a post by ID' })
   @ApiResponse({
     status: 200,
@@ -105,7 +110,8 @@ export class PostController {
     status: 500,
     description: 'Internal Server Error',
   })
-  async remove(@Param('id') id: string) {
-    return await this.postService.remove(+id);
+  async remove(@Req() request: Request, @Param('id') id: string) {
+    return await this.postService.remove(request, +id);
   }
+
 }

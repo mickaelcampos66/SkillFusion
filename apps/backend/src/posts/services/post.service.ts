@@ -1,14 +1,20 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
 import { IApiResponse } from 'src/interface/IApiResponse';
 import { IPost, IPostWithLinks } from 'src/interface/IPost';
 import { PrismaService } from 'src/prisma.service';
 import { ApiResponse } from 'src/common/ApiResponse';
+import { Request } from 'express';
+import { IVerifiedToken } from 'src/interface/IVerifiedToken';
+import { JwtUtil } from 'src/utils/jwt.util';
 
 @Injectable()
 export class PostService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtUtil: JwtUtil
+  ) { }
 
   async create(createPostDto: CreatePostDto): Promise<IApiResponse<IPost> | undefined> {
     try {
@@ -37,6 +43,9 @@ export class PostService {
       ]);
 
       const totalPages = Math.ceil(totalCount / limit);
+      if (page > totalPages && totalPages > 0) {
+        throw new NotFoundException(`Page ${page} out of range.`);
+      }
       const postsWithLinks: IPostWithLinks[] = posts.map((post) => {
         return {
           ...post,
@@ -81,17 +90,23 @@ export class PostService {
     }
   }
 
-  async update(id: number, updatePostDto: UpdatePostDto) {
+  async update(request: Request, id: number, updatePostDto: UpdatePostDto) {
     try {
-      await this.findOne(id);
-      const post = await this.prisma.post.update({
+      const userId = this.getUserIdFromRequest(request);
+      const post = await this.findOne(id);
+      if (userId !== post?.data.user_id) {
+        throw new UnauthorizedException('You are not authorized to update this post');
+      }
+
+      const updatedPost = await this.prisma.post.update({
         where: { id },
         data: updatePostDto,
       });
+
       return new ApiResponse(
         {
-          ...post,
-          links: this.buildPostLinks(post),
+          ...updatedPost,
+          links: this.buildPostLinks(updatedPost),
         },
         undefined,
         `Post ${id} updated successfully`,
@@ -101,10 +116,14 @@ export class PostService {
     }
   }
 
-  async remove(id: number) {
+  async remove(request: Request, id: number) {
     try {
-      await this.findOne(id);
-      const post = await this.prisma.post.delete({
+      const userId = this.getUserIdFromRequest(request);
+      const post = await this.findOne(id);
+      if (userId !== post?.data.user_id) {
+        throw new UnauthorizedException('You are not authorized to delete this post');
+      }
+      await this.prisma.post.delete({
         where: { id },
       });
       return new ApiResponse(
@@ -142,5 +161,28 @@ export class PostService {
     throw error instanceof Error
       ? new BadRequestException(error.message)
       : new BadRequestException(JSON.stringify(error));
+  }
+
+  private getUserIdFromRequest(request: Request): number {
+    const authHeader = request.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new UnauthorizedException('No token provided');
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    let decoded: IVerifiedToken;
+    try {
+      decoded = this.jwtUtil.verify(token);
+    } catch (err) {
+      throw new UnauthorizedException('Invalid or expired token');
+    }
+
+    if (!decoded?.sub) {
+      throw new UnauthorizedException('Token is missing user ID');
+    }
+
+    return decoded.sub;
   }
 }
