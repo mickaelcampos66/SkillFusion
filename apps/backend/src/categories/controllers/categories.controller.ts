@@ -46,15 +46,13 @@ export class CategoriesController {
   async findOne(
     @Param('id') id: number,
   ): Promise<CategoryEntity | MessageUtilType> {
-    const category = (await this.CategoriesService.findOne(
-      id,
-    )) as CategoryEntity;
+    const category = await this.CategoriesService.findOne(id);
 
     if (!category) {
       return new MessageUtil(404, false, 'Category not found').toJSON();
     }
 
-    return new CategoryEntity(category);
+    return category;
   }
 
   @Put(':id')
@@ -79,7 +77,7 @@ export class CategoriesController {
       return new MessageUtil(404, false, 'Category not found').toJSON();
     }
 
-    return new CategoryEntity(category);
+    return category;
   }
 
   @Post()
@@ -93,9 +91,7 @@ export class CategoriesController {
   async create(
     @Body() categories: CreateCategoriesDto,
   ): Promise<CategoryEntity | MessageUtilType> {
-    const category = (await this.CategoriesService.create(
-      categories,
-    )) as CategoryEntity;
+    const category = await this.CategoriesService.create(categories);
 
     if (!category) {
       return new MessageUtil(
@@ -105,7 +101,7 @@ export class CategoriesController {
       ).toJSON();
     }
 
-    return new CategoryEntity(category);
+    return category;
   }
 
   @Delete(':id')
