@@ -4,6 +4,7 @@ import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 describe('CommentsController', () => {
   let controller: CommentsController;
@@ -39,7 +40,12 @@ describe('CommentsController', () => {
           },
         },
       ],
-    }).compile();
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue({
+        canActivate: jest.fn(() => true),
+      })
+      .compile();
 
     controller = module.get<CommentsController>(CommentsController);
     commentsService = module.get<CommentsService>(CommentsService);
@@ -60,29 +66,31 @@ describe('CommentsController', () => {
     it('should create a comment with valid data', async () => {
       const dto: CreateCommentDto = {
         content: 'Test comment',
-        user_id: 1,
         post_id: 1,
       };
 
       const createSpy = jest
         .spyOn(commentsService, 'create')
         .mockResolvedValue(mockComment);
-      const result = await controller.create(dto);
+      const result = await controller.create(1, dto);
       expect(result).toEqual(mockComment);
-      expect(createSpy).toHaveBeenCalledWith(dto);
+      expect(createSpy).toHaveBeenCalledWith(1, dto);
     });
 
     it('should handle missing required fields', async () => {
       jest
         .spyOn(commentsService, 'create')
-        .mockImplementation((dto: CreateCommentDto) => {
-          if (!dto.user_id || !dto.post_id) {
+        .mockImplementation((_userId: number, dto: CreateCommentDto) => {
+          if (!dto.post_id) {
             return Promise.reject(new Error('Missing required fields'));
           }
           return Promise.resolve(mockComment);
         });
       const invalidDto = { content: 'Test comment' };
-      const createPromise = controller.create(invalidDto as CreateCommentDto);
+      const createPromise = controller.create(
+        1,
+        invalidDto as CreateCommentDto,
+      );
       await expect(createPromise).rejects.toThrow('Missing required fields');
     });
   });
@@ -148,14 +156,14 @@ describe('CommentsController', () => {
           }),
         );
 
-      const result = await controller.update('1', dto);
+      const result = await controller.update(1, '1', dto);
 
       expect(result).toEqual(
         Object.assign(new Comment(), mockComment, {
           content: 'Updated',
         }),
       );
-      expect(updateSpy).toHaveBeenCalledWith(1, dto);
+      expect(updateSpy).toHaveBeenCalledWith(1, 1, dto);
     });
 
     it('should handle empty update data', async () => {
@@ -165,11 +173,12 @@ describe('CommentsController', () => {
         .mockRejectedValue(new Error('Invalid update data'));
 
       const updatePromise = controller.update(
+        1,
         '1',
         emptyDto as UpdateCommentDto,
       );
       await expect(updatePromise).rejects.toThrow('Invalid update data');
-      expect(updateSpy).toHaveBeenCalledWith(1, emptyDto);
+      expect(updateSpy).toHaveBeenCalledWith(1, 1, emptyDto);
     });
   });
 
@@ -179,10 +188,10 @@ describe('CommentsController', () => {
         .spyOn(commentsService, 'deleteOne')
         .mockResolvedValue(mockComment);
 
-      const result = await controller.remove('1');
+      const result = await controller.remove(1, '1');
 
       expect(result).toEqual(mockComment);
-      expect(deleteSpy).toHaveBeenCalledWith(1);
+      expect(deleteSpy).toHaveBeenCalledWith(1, 1);
     });
 
     it('should handle non-existent comment deletion', async () => {
@@ -190,9 +199,9 @@ describe('CommentsController', () => {
         .spyOn(commentsService, 'deleteOne')
         .mockRejectedValue(new Error('Comment not found'));
 
-      const deletePromise = controller.remove('999');
+      const deletePromise = controller.remove(1, '999');
       await expect(deletePromise).rejects.toThrow('Comment not found');
-      expect(deleteSpy).toHaveBeenCalledWith(999);
+      expect(deleteSpy).toHaveBeenCalledWith(1, 999);
     });
   });
 });

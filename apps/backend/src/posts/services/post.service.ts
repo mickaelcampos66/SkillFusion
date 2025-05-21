@@ -10,16 +10,10 @@ import { IApiResponse } from 'src/interface/IApiResponse';
 import { IPost, IPostWithLinks } from 'src/interface/IPost';
 import { PrismaService } from 'src/prisma.service';
 import { ApiResponse } from 'src/common/ApiResponse';
-import { Request } from 'express';
-import { IVerifiedToken } from 'src/interface/IVerifiedToken';
-import { JwtUtil } from 'src/utils/jwt.util';
 
 @Injectable()
 export class PostService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly jwtUtil: JwtUtil,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(
     createPostDto: CreatePostDto,
@@ -95,10 +89,8 @@ export class PostService {
       this.handleError(error);
     }
   }
-
-  async update(request: Request, id: number, updatePostDto: UpdatePostDto) {
+  async update(userId: number, id: number, updatePostDto: UpdatePostDto) {
     try {
-      const userId = this.getUserIdFromRequest(request);
       const post = await this.findOne(id);
       if (userId !== post?.data.user_id) {
         throw new UnauthorizedException(
@@ -124,9 +116,8 @@ export class PostService {
     }
   }
 
-  async remove(request: Request, id: number) {
+  async remove(userId: number, id: number) {
     try {
-      const userId = this.getUserIdFromRequest(request);
       const post = await this.findOne(id);
       if (userId !== post?.data.user_id) {
         throw new UnauthorizedException(
@@ -172,28 +163,5 @@ export class PostService {
     throw error instanceof Error
       ? new BadRequestException(error.message)
       : new BadRequestException(JSON.stringify(error));
-  }
-
-  private getUserIdFromRequest(request: Request): number {
-    const authHeader = request.headers.authorization;
-
-    if (!authHeader?.startsWith('Bearer ')) {
-      throw new UnauthorizedException('No token provided');
-    }
-
-    const token = authHeader.split(' ')[1];
-
-    let decoded: IVerifiedToken;
-    try {
-      decoded = this.jwtUtil.verify(token);
-    } catch (_err) {
-      throw new UnauthorizedException('Invalid or expired token');
-    }
-
-    if (!decoded.sub) {
-      throw new UnauthorizedException('Token is missing user ID');
-    }
-
-    return decoded.sub;
   }
 }

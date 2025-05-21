@@ -6,12 +6,15 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { Comment } from './entities/comment.entity';
 import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { User } from 'src/common/decorators/User';
 
 @ApiTags('comments')
 @Controller('comments')
@@ -20,8 +23,12 @@ export class CommentsController {
 
   @Post()
   @ApiCreatedResponse({ type: Comment })
-  create(@Body() createCommentDto: CreateCommentDto): Promise<Comment> {
-    return this.commentsService.create(createCommentDto);
+  @UseGuards(JwtAuthGuard)
+  create(
+    @User('sub') userId: number,
+    @Body() createCommentDto: CreateCommentDto,
+  ): Promise<Comment> {
+    return this.commentsService.create(userId, createCommentDto);
   }
 
   @Get()
@@ -38,16 +45,22 @@ export class CommentsController {
 
   @Patch(':id')
   @ApiOkResponse({ type: Comment })
+  @UseGuards(JwtAuthGuard)
   update(
+    @User('sub') userId: number,
     @Param('id') id: string,
     @Body() updateCommentDto: UpdateCommentDto,
   ): Promise<Comment | null> {
-    return this.commentsService.updateOne(+id, updateCommentDto);
+    return this.commentsService.updateOne(userId, +id, updateCommentDto);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: Comment })
-  remove(@Param('id') id: string): Promise<Comment | null> {
-    return this.commentsService.deleteOne(+id);
+  remove(
+    @User('sub') userId: number,
+    @Param('id') id: string,
+  ): Promise<Comment | null> {
+    return this.commentsService.deleteOne(userId, +id);
   }
 }

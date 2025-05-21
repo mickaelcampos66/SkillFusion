@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { CourseDto } from '../dto/course.dto';
 import { CoursesService } from '../services/courses.service';
@@ -18,6 +19,8 @@ import {
   ApiParam,
   ApiBody,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { User } from 'src/common/decorators/User';
 
 @ApiTags('Courses')
 @Controller('courses')
@@ -56,7 +59,8 @@ export class CoursesController {
     status: 404,
     description: 'No courses found',
   })
-  findAllMyCourses(@Param('userId') userId: number): Promise<CourseDto[]> {
+  @UseGuards(JwtAuthGuard)
+  findAllMyCourses(@User('sub') userId: number): Promise<CourseDto[]> {
     return this.CoursesService.findAllByUserId(userId);
   }
 

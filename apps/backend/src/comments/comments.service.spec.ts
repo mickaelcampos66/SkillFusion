@@ -77,10 +77,9 @@ describe('CommentsService', () => {
     });
 
     it('should return null for non-existent comment', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
       const findUniqueSpy = jest
         .spyOn(prismaService.comment, 'findUnique')
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
         .mockResolvedValueOnce(null);
 
       const result = await service.findOne(999);
@@ -89,67 +88,65 @@ describe('CommentsService', () => {
     });
   });
 
-  describe('create', () => {
-    it('should create and return a comment', async () => {
-      const dto: CreateCommentDto = {
+  it('should create and return a comment', async () => {
+    const dto: CreateCommentDto = {
+      content: 'Test comment',
+      post_id: 1,
+    };
+
+    const createSpy = jest.spyOn(prismaService.comment, 'create');
+
+    const result = await service.create(1, dto);
+
+    expect(result).toEqual(mockComment);
+    expect(createSpy).toHaveBeenCalledWith({
+      data: {
         content: 'Test comment',
-        user_id: 1,
         post_id: 1,
-      };
-
-      const createSpy = jest.spyOn(
-        prismaService.comment,
-        'create',
-      ) as jest.SpiedFunction<typeof prismaService.comment.create>;
-      const result = await service.create(dto);
-
-      expect(result).toEqual(mockComment);
-      expect(createSpy).toHaveBeenCalledWith({ data: dto });
+        user_id: 1,
+      },
     });
   });
 
-  describe('updateOne', () => {
-    it('should update and return a comment', async () => {
-      const dto: UpdateCommentDto = { content: 'Updated' };
-      const updateSpy = jest.spyOn(
-        prismaService.comment,
-        'update',
-      ) as jest.SpiedFunction<typeof prismaService.comment.update>;
-      const result = await service.updateOne(1, dto);
+  it('should update and return a comment if user is authorized', async () => {
+    const dto: UpdateCommentDto = { content: 'Updated' };
 
-      expect(result).toEqual(
-        Object.assign(new Comment(), mockComment, {
-          content: 'Updated',
-        }),
-      );
-      expect(updateSpy).toHaveBeenCalledWith({
-        where: { id: 1 },
-        data: dto,
-      });
+    jest.spyOn(service, 'findOne').mockResolvedValue(mockComment);
+
+    const updateSpy = jest.spyOn(prismaService.comment, 'update');
+
+    const result = await service.updateOne(1, 1, dto);
+
+    expect(result).toEqual(
+      Object.assign({}, mockComment, { content: 'Updated' }),
+    );
+    expect(updateSpy).toHaveBeenCalledWith({
+      where: { id: 1 },
+      data: dto,
     });
   });
 
-  describe('deleteOne', () => {
-    it('should delete and return a comment', async () => {
-      const deleteSpy = jest.spyOn(
-        prismaService.comment,
-        'delete',
-      ) as jest.SpiedFunction<typeof prismaService.comment.delete>;
-      const result = await service.deleteOne(1);
+  it('should delete and return a comment if user is authorized', async () => {
+    // Mock findOne to simulate authorization
+    jest.spyOn(service, 'findOne').mockResolvedValue(mockComment);
 
-      expect(result).toEqual(mockComment);
-      expect(deleteSpy).toHaveBeenCalledWith({ where: { id: 1 } });
-    });
+    const deleteSpy = jest.spyOn(prismaService.comment, 'delete');
 
-    it('should return null when deleting non-existent comment', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-      const deleteSpy = jest
-        .spyOn(prismaService.comment, 'delete')
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        .mockRejectedValueOnce(new Error('Comment not found'));
+    const result = await service.deleteOne(1, 1);
 
-      await expect(service.deleteOne(999)).rejects.toThrow('Comment not found');
-      expect(deleteSpy).toHaveBeenCalledWith({ where: { id: 999 } });
-    });
+    expect(result).toEqual(mockComment);
+    expect(deleteSpy).toHaveBeenCalledWith({ where: { id: 1 } });
+  });
+
+  it('should return null when deleting non-existent comment', async () => {
+    const deleteSpy = jest
+      .spyOn(prismaService.comment, 'delete')
+
+      .mockRejectedValueOnce(new Error('Comment not found'));
+
+    await expect(service.deleteOne(1, 999)).rejects.toThrow(
+      'Comment not found',
+    );
+    expect(deleteSpy).toHaveBeenCalledWith({ where: { id: 999 } });
   });
 });

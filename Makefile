@@ -64,7 +64,7 @@ migrations: ## Run database migrations
 	@$(DOCKER_RUN) backend yarn prisma migrate deploy
 
 fixtures: ## Run database fixtures
-	@$(BACKEND_CONT) yarn seed
+	@$(BACKEND_CONT) yarn seed 
 
 tsc-backend: ## Run TypeScript check on the backend
 	@$(DOCKER_RUN) backend yarn tsc

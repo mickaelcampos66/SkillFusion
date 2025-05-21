@@ -7,7 +7,7 @@ import {
   Param,
   Delete,
   Query,
-  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { PostService } from '../services/post.service';
 import { CreatePostDto } from '../dto/create-post.dto';
@@ -18,7 +18,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Request } from 'express';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { User } from 'src/common/decorators/User';
 
 @ApiTags('Posts')
 @Controller('posts')
@@ -108,12 +109,13 @@ export class PostController {
     status: 500,
     description: 'Internal Server Error',
   })
+  @UseGuards(JwtAuthGuard)
   async update(
-    @Req() request: Request,
+    @User('sub') userId: number,
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
   ) {
-    return await this.postService.update(request, +id, updatePostDto);
+    return await this.postService.update(userId, +id, updatePostDto);
   }
 
   @Delete(':id')
@@ -135,7 +137,8 @@ export class PostController {
     status: 500,
     description: 'Internal Server Error',
   })
-  async remove(@Req() request: Request, @Param('id') id: string) {
-    return await this.postService.remove(request, +id);
+  @UseGuards(JwtAuthGuard)
+  async remove(@User('sub') userId: number, @Param('id') id: string) {
+    return await this.postService.remove(userId, +id);
   }
 }

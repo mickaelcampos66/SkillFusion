@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CommentsController } from './comments.controller';
 import { AuthModule } from '../auth/modules/auth.module';
+import { JwtCustomModule } from 'src/utils/jwt.module';
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, JwtCustomModule],
   controllers: [CommentsController],
   providers: [CommentsService],
 })
