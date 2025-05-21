@@ -30,4 +30,23 @@ export class CoursesService {
   async create(course: CreateCourseDto): Promise<CourseDto> {
     return this.PrismaService.course.create({ data: course });
   }
+
+  async findByCategoryId(categoryId: number): Promise<CourseDto[]> {
+    return this.PrismaService.course.findMany({
+      where: {
+        courseCategories: {
+          some: {
+            id: categoryId,
+          },
+        },
+      },
+      include: {
+        courseCategories: {
+          include: {
+            category: true
+          },
+        },
+      },
+    });
+  }
 }
