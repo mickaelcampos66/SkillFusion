@@ -1,4 +1,4 @@
-import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsArray, IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CourseDto {
@@ -75,4 +75,12 @@ export class CourseDto {
   @IsNumber()
   @IsNotEmpty()
   created_by: number;
+
+  @ApiProperty({
+    description: 'List of category IDs this course belongs to',
+    example: [5, 7],
+  })
+  @IsArray()
+  @IsNumber({}, { each: true })
+  categoryIds: number[];
 }
