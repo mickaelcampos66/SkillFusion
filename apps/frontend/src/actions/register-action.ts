@@ -3,18 +3,7 @@
 import { createSession } from '@/lib/session'
 import { redirect } from 'next/navigation'
 import { env } from '~/env.config'
-
-type RegisterFormState = {
-  message: string
-  fields?: Record<string, string>
-  issues?: string[]
-}
-
-type ErrorType = {
-  message: string | string[]
-  error: string
-  statusCode: number
-}
+import type { FormState, ErrorType } from '@/types/form-types'
 
 export type RegisterUserResult = {
   message: string
@@ -25,9 +14,9 @@ export type RegisterUserResult = {
 }
 
 export async function registerAction(
-  _prevState: RegisterFormState,
+  _prevState: FormState,
   data: FormData,
-): Promise<RegisterFormState> {
+): Promise<FormState> {
   const formData = Object.fromEntries(data)
 
   const fields: Record<string, string> = {}

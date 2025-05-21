@@ -1,38 +1,41 @@
 'use server'
 
 import { env } from '~/env.config'
-import { createSession } from '@/lib/session'
-import { redirect } from 'next/navigation'
+import { getSession } from '@/lib/session'
 import type { FormState, ErrorType } from '@/types/form-types'
+import { postSchema } from '@/lib/schemas/post-schema'
+import { revalidatePath } from 'next/cache'
 
-type LoginResult = {
-  message: string
-  accessToken: string
-  id: number
-  firstname: string
-  lastname: string
-}
-
-export async function loginAction(
+export async function createPostAction(
   _prevState: FormState,
   data: FormData,
 ): Promise<FormState> {
+  const user = await getSession()
+
+  if (!user) {
+    return {
+      message: 'Vous devez être connecté pour créer une discussion',
+    }
+  }
+
   const formData = Object.fromEntries(data)
 
   const fields: Record<string, string> = {}
   for (const key of Object.keys(formData)) {
     fields[key] = formData[key].toString()
   }
+  const parsedFields = postSchema.safeParse(fields).data
 
   try {
-    const response = await fetch(env.SERVER_API_URL + '/api/auth/login', {
+    const response = await fetch(env.SERVER_API_URL + '/api/posts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${user?.accessToken}`,
       },
       body: JSON.stringify({
-        email: fields.email,
-        password: fields.password,
+        title: parsedFields?.title,
+        content: parsedFields?.content,
       }),
     })
 
@@ -47,18 +50,18 @@ export async function loginAction(
           : [errorData.message],
       }
     }
-
-    const result: LoginResult = await response.json()
-    await createSession(result)
   }
   catch (error) {
     return {
-      message: 'An error occurred while logging in',
+      message: 'An error occurred while creating the post',
       fields,
       issues: [
         error instanceof Error ? error.message : 'Unknown error, please try again, or contact support',
       ],
     }
   }
-  redirect('/')
+  revalidatePath('/forum')
+  return {
+    message: 'La question a été créé avec succès',
+  }
 }
