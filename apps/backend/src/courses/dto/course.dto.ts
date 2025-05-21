@@ -1,5 +1,7 @@
 import { IsArray, IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { CategoryEntity } from 'src/categories/entities/category.entity';
+import { Type } from 'class-transformer';
 
 export class CourseDto {
   @ApiProperty({
@@ -77,10 +79,10 @@ export class CourseDto {
   created_by: number;
 
   @ApiProperty({
-    description: 'List of category IDs this course belongs to',
-    example: [5, 7],
+    description: 'List of categories associated with the course',
+    type: [CategoryEntity],
   })
   @IsArray()
-  @IsNumber({}, { each: true })
-  categoryIds: number[];
+  @Type(() => CategoryEntity)
+  categories: CategoryEntity[];
 }

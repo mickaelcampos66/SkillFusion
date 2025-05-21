@@ -11,9 +11,6 @@ export class CoursesService {
   private mapCourseToDto(course: any): CourseDto {
     return {
       ...course,
-      categoryIds: course.courseCategories
-        ? course.courseCategories.map((cc) => cc.category.id)
-        : [],
     };
   }
 
@@ -68,7 +65,7 @@ export class CoursesService {
 
   async create(course: CreateCourseDto): Promise<CourseDto> {
     const newCourse = await this.PrismaService.course.create({ data: course });
-    return { ...newCourse, categoryIds: [] };
+    return { ...newCourse, categories: [] };
   }
 
   async findByCategoryId(categoryId: number): Promise<CourseDto[]> {
