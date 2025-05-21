@@ -135,7 +135,7 @@ export class CoursesController {
     description: 'Courses filtered by category',
     type: [CourseDto],
   })
-  findByCategory(@Param('categoryId') categoryId: number) {
-    return this.CoursesService.findByCategoryId(Number(categoryId));
+  async findByCategory(@Param('categoryId') categoryId: number): Promise<CourseDto[]> {
+    return await this.CoursesService.findByCategoryId(Number(categoryId));
   }
 }

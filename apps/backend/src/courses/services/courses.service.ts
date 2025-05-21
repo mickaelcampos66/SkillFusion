@@ -3,14 +3,23 @@ import { PrismaService } from 'src/prisma.service';
 import { UpdateCourseDto } from '../dto/update-course.dto';
 import { CourseDto } from '../dto/course.dto';
 import { CreateCourseDto } from '../dto/create-course.dto';
+import { ICourse } from 'src/interface/ICourse';
+import { CategoryEntity } from 'src/categories/entities/category.entity';
 
 @Injectable()
 export class CoursesService {
   constructor(private readonly PrismaService: PrismaService) {}
 
-  private mapCourseToDto(course: any): CourseDto {
+  private mapCourseToDto(course: ICourse): CourseDto {
+    const { courseCategories, created_at, updated_at, ...courseDetails } = course;
+  
     return {
-      ...course,
+      ...courseDetails,
+      created_at: created_at ?? null,
+      updated_at: updated_at ?? null,
+      categories: Array.isArray(courseCategories)
+        ? courseCategories.map(cc => new CategoryEntity(cc.category))
+        : [],
     };
   }
 

@@ -43,7 +43,7 @@ export class CourseDto {
     required: false,
   })
   @IsString()
-  image: string | null;
+  image?: string | null;
 
   @ApiProperty({
     description: 'The date when the course was created',
