@@ -5,6 +5,7 @@ import { getSession } from '@/lib/session'
 import type { FormState, ErrorType } from '@/types/form-types'
 import { postSchema } from '@/lib/schemas/post-schema'
 import { revalidatePath } from 'next/cache'
+import { handleError } from '@/lib/utils'
 
 export async function createPostAction(
   _prevState: FormState,
@@ -40,25 +41,13 @@ export async function createPostAction(
     })
 
     if (!response.ok) {
-      const errorData: ErrorType = await response.json()
+      const err: ErrorType = await response.json()
 
-      return {
-        message: errorData.error,
-        fields,
-        issues: Array.isArray(errorData.message)
-          ? errorData.message
-          : [errorData.message],
-      }
+      return handleError(err, fields)
     }
   }
   catch (error) {
-    return {
-      message: 'An error occurred while creating the post',
-      fields,
-      issues: [
-        error instanceof Error ? error.message : 'Unknown error, please try again, or contact support',
-      ],
-    }
+    return handleError(error, fields)
   }
   revalidatePath('/forum')
   return {

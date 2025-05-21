@@ -13,3 +13,24 @@ export function formatDate(
     new Date(date),
   )
 }
+
+type FormState = {
+  message: string
+  fields?: Record<string, string>
+  issues?: string[]
+}
+
+export function handleError(err: unknown, fields: Record<string, string> = {}): FormState {
+  if (err instanceof TypeError) {
+    return {
+      message: 'Impossible de contacter le serveur. Vérifiez votre connexion.',
+      fields,
+      issues: [err.message],
+    }
+  }
+  return {
+    message: 'Une erreur inattendue est survenue.',
+    fields,
+    issues: [err instanceof Error ? err.message : 'Unknown error'],
+  }
+}

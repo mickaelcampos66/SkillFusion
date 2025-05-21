@@ -4,6 +4,7 @@ import { createSession } from '@/lib/session'
 import { redirect } from 'next/navigation'
 import { env } from '~/env.config'
 import type { FormState, ErrorType } from '@/types/form-types'
+import { handleError } from '@/lib/utils'
 
 export type RegisterUserResult = {
   message: string
@@ -43,13 +44,9 @@ export async function registerAction(
     })
 
     if (!response.ok) {
-      const errorData: ErrorType = await response.json()
+      const err: ErrorType = await response.json()
 
-      return {
-        message: errorData.error,
-        fields,
-        issues: Array.isArray(errorData.message) ? errorData.message : [errorData.message],
-      }
+      return handleError(err, fields)
     }
 
     const result: RegisterUserResult = await response.json()
@@ -57,12 +54,7 @@ export async function registerAction(
     await createSession(result)
   }
   catch (error) {
-    return {
-      message: 'An error occurred while registering',
-      fields,
-      issues: [error instanceof Error ? error.message : 'Unknown error, please try again, or contact support'],
-    }
+    return handleError(error, fields)
   }
-
   redirect('/')
 }

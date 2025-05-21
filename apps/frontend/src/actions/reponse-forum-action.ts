@@ -1,5 +1,6 @@
 'use server'
 
+import { handleError } from '@/lib/utils'
 import type { FormState } from '@/types/form-types'
 
 export async function responseForumAction(
@@ -44,12 +45,6 @@ export async function responseForumAction(
     }
   }
   catch (error) {
-    return {
-      message: 'An error occurred while logging in',
-      fields,
-      issues: [
-        error instanceof Error ? error.message : 'Unknown error, please try again, or contact support',
-      ],
-    }
+    return handleError(error, fields)
   }
 }
