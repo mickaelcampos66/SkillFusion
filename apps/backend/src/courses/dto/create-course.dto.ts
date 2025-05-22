@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateCourseDto {
   @ApiProperty({
@@ -8,7 +8,7 @@ export class CreateCourseDto {
   })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
 
   @ApiProperty({
     description: 'A brief description of the course content',
@@ -16,7 +16,7 @@ export class CreateCourseDto {
   })
   @IsString()
   @IsNotEmpty()
-  description: string;
+  description!: string;
 
   @ApiProperty({
     description: 'The main content or syllabus of the course',
@@ -25,15 +25,15 @@ export class CreateCourseDto {
   })
   @IsString()
   @IsNotEmpty()
-  content: string;
+  content!: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'URL or path to the image representing the course (optional)',
     example: 'https://example.com/course-image.jpg',
-    required: false,
   })
   @IsString()
-  image: string | null;
+  @IsOptional()
+  image?: string | null;
 
   @ApiProperty({
     description:
@@ -42,7 +42,7 @@ export class CreateCourseDto {
   })
   @IsString()
   @IsNotEmpty()
-  level: string;
+  level!: string;
 
   @ApiProperty({
     description: 'ID of the user who created the course',
@@ -50,7 +50,7 @@ export class CreateCourseDto {
   })
   @IsNumber()
   @IsNotEmpty()
-  created_by: number;
+  created_by!: number;
 
   // @IsArray()
   // @IsString({ each: true })

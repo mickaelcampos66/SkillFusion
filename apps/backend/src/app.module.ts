@@ -6,6 +6,7 @@ import { CoursesModule } from './courses/modules/courses.module';
 import { CategoriesModule } from './categories/modules/categories.module';
 import { HealthChkModule } from './healthchk/modules/healthchk.module';
 import { PostModule } from './posts/modules/post.module';
+import { PrismaModule } from './prisma.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { PostModule } from './posts/modules/post.module';
     HealthChkModule,
     CategoriesModule,
     PostModule,
+    PrismaModule,
   ],
   controllers: [],
   providers: [],

@@ -1,5 +1,12 @@
-import { IsArray, IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsArray,
+  IsDate,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { CategoryEntity } from 'src/categories/entities/category.entity';
 import { Type } from 'class-transformer';
 
@@ -10,7 +17,7 @@ export class CourseDto {
   })
   @IsNumber()
   @IsNotEmpty()
-  id: number;
+  id!: number;
 
   @ApiProperty({
     description: 'The name of the course',
@@ -18,7 +25,7 @@ export class CourseDto {
   })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
 
   @ApiProperty({
     description: 'A brief description of the course',
@@ -26,7 +33,7 @@ export class CourseDto {
   })
   @IsString()
   @IsNotEmpty()
-  description: string;
+  description!: string;
 
   @ApiProperty({
     description: 'The main content or syllabus of the course',
@@ -35,31 +42,34 @@ export class CourseDto {
   })
   @IsString()
   @IsNotEmpty()
-  content: string;
+  content!: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'URL or path to the image representing the course (optional)',
     example: 'https://example.com/course-image.jpg',
     required: false,
   })
   @IsString()
+  @IsOptional()
   image?: string | null;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'The date when the course was created',
     example: '2023-01-01T00:00:00Z',
     required: false,
   })
   @IsDate()
-  created_at: Date | null;
+  @IsOptional()
+  created_at?: Date | null;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'The date when the course was last updated',
     example: '2023-01-15T00:00:00Z',
     required: false,
   })
   @IsDate()
-  updated_at: Date | null;
+  @IsOptional()
+  updated_at?: Date | null;
 
   @ApiProperty({
     description:
@@ -68,7 +78,7 @@ export class CourseDto {
   })
   @IsString()
   @IsNotEmpty()
-  level: string;
+  level!: string;
 
   @ApiProperty({
     description: 'ID of the user who created the course',
@@ -81,6 +91,7 @@ export class CourseDto {
   @ApiProperty({
     description: 'List of categories associated with the course',
     type: [CategoryEntity],
+    isArray: true,
   })
   @IsArray()
   @Type(() => CategoryEntity)

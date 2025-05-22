@@ -8,7 +8,7 @@ import {
   Length,
   Matches,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateUserDto {
   @ApiProperty({
@@ -17,7 +17,7 @@ export class CreateUserDto {
   })
   @IsString()
   @IsNotEmpty()
-  firstname: string;
+  firstname!: string;
 
   @ApiProperty({
     description: "User's last name",
@@ -25,7 +25,7 @@ export class CreateUserDto {
   })
   @IsString()
   @IsNotEmpty()
-  lastname: string;
+  lastname!: string;
 
   @ApiProperty({
     description: "User's email address",
@@ -33,7 +33,7 @@ export class CreateUserDto {
   })
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  email!: string;
 
   @ApiProperty({
     description:
@@ -50,25 +50,23 @@ export class CreateUserDto {
     message: 'Password must contain at least one lowercase letter',
   })
   @Matches(/[0-9]/, { message: 'Password must contain at least one number' })
-  password: string;
+  password!: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: "User's phone number (optional)",
     example: '+33612345678',
-    required: false,
   })
   @IsPhoneNumber('FR')
   @IsOptional()
-  phone_number: string;
+  phone_number?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: "User's address (optional)",
     example: '123 Rue de Paris, 75001 Paris, France',
-    required: false,
   })
   @IsString()
   @IsOptional()
-  address: string;
+  address?: string;
 
   @ApiProperty({
     description: 'Role ID for the user (must be a valid integer)',
@@ -76,5 +74,5 @@ export class CreateUserDto {
   })
   @IsInt()
   @IsNotEmpty()
-  role_id: number;
+  role_id!: number;
 }

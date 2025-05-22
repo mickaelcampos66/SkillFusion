@@ -11,14 +11,15 @@ export class CoursesService {
   constructor(private readonly PrismaService: PrismaService) {}
 
   private mapCourseToDto(course: ICourse): CourseDto {
-    const { courseCategories, created_at, updated_at, ...courseDetails } = course;
-  
+    const { courseCategories, created_at, updated_at, ...courseDetails } =
+      course;
+
     return {
       ...courseDetails,
       created_at: created_at ?? null,
       updated_at: updated_at ?? null,
       categories: Array.isArray(courseCategories)
-        ? courseCategories.map(cc => new CategoryEntity(cc.category))
+        ? courseCategories.map((cc) => new CategoryEntity(cc.category))
         : [],
     };
   }
@@ -31,7 +32,7 @@ export class CoursesService {
         },
       },
     });
-    return courses.map(this.mapCourseToDto);
+    return courses.map((course) => this.mapCourseToDto(course));
   }
 
   async findOne(id: number): Promise<CourseDto | null> {
@@ -59,7 +60,10 @@ export class CoursesService {
     return this.mapCourseToDto(course);
   }
 
-  async updateOne(id: number, course: UpdateCourseDto): Promise<CourseDto | null> {
+  async updateOne(
+    id: number,
+    course: UpdateCourseDto,
+  ): Promise<CourseDto | null> {
     const updatedCourse = await this.PrismaService.course.update({
       where: { id },
       data: course,
@@ -92,6 +96,6 @@ export class CoursesService {
         },
       },
     });
-    return courses.map(this.mapCourseToDto);
+    return courses.map((course) => this.mapCourseToDto(course));
   }
 }

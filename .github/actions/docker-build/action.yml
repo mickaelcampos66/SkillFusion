@@ -23,7 +23,9 @@ runs:
           ${{ runner.os }}-${{ inputs.service }}-
 
     - run: |
-        docker buildx build apps/${{ inputs.service }} \
+        docker buildx build \
+          -t ${{ inputs.service }}:test-latest \
+          apps/${{ inputs.service }} \
           --file docker/${{ inputs.service }}/Dockerfile \
           --target ${{ inputs.target }} \
           --progress=plain \

@@ -1,12 +1,9 @@
-import { Injectable } from '@nestjs/common';
-
-export type MessageUtilType = {
+export interface MessageUtilType {
   statusCode: number;
   success: boolean;
   message: string;
-};
+}
 
-@Injectable()
 export class MessageUtil {
   constructor(
     private readonly _statusCode: number,

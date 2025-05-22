@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
       { hostname: 'media.istockphoto.com' },
       { hostname: 'images.unsplash.com' },
       { hostname: 'plus.unsplash.com' },
+      { hostname: 'imge.com' },
     ],
   },
   async rewrites() {

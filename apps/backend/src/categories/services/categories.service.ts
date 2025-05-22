@@ -8,7 +8,7 @@ import { CategoryEntity } from '../entities/category.entity';
 export class CategoriesService {
   constructor(private readonly PrismaService: PrismaService) {}
 
-  async findAll(): Promise<Array<CategoryEntity>> {
+  async findAll(): Promise<CategoryEntity[]> {
     return this.PrismaService.category.findMany({});
   }
 
