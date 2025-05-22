@@ -24,7 +24,7 @@ export const mockUserWithLinks: IUserWithLinks = {
   firstname: 'John',
   lastname: 'Doe',
   email: 'john.doe@example.com',
-  password: 'hashed-password',
+  // password: 'hashed-password',
   phone_number: '1234567890',
   address: '123 Test Street',
   role_id: 1,

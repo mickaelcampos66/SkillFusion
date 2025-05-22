@@ -1,5 +1,5 @@
 name: Setup github action
-description: Setup github action environment, with docker buildx and .env file
+description: Setup github action .env file
 
 inputs:
   init_env:

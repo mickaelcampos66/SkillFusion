@@ -10,3 +10,5 @@ concurrency:
 jobs:
   app-frontend:
     uses: ./.github/workflows/app-frontend.yml
+  app-backend:
+    uses: ./.github/workflows/app-backend.yml

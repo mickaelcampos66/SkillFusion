@@ -30,7 +30,7 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly jwtUtil: JwtUtil,
-  ) { }
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
@@ -84,7 +84,7 @@ export class UserController {
     description: 'Unauthorized',
   })
   async findMe(@Req() request: Request) {
-    const authorization = request.headers['authorization'];
+    const authorization = request.headers.authorization;
     if (!authorization) throw new Error('Authorization header not found');
     const token = authorization.split(' ')[1];
     if (!token) throw new Error('Token not found');
@@ -94,7 +94,7 @@ export class UserController {
     const { role, ...rest } = userData.data;
     const cleanedData = {
       ...rest,
-      role: role?.name
+      role: role?.name,
     };
     return { data: cleanedData };
   }

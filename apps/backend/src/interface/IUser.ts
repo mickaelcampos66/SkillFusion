@@ -19,4 +19,5 @@ export interface IUser {
   courses?: ICourse[];
 }
 
-export interface IUserWithLinks extends IUser, IWithLinks {}
+export type IUserWithoutPassword = Omit<IUser, 'password'>;
+export type IUserWithLinks = IUserWithoutPassword & IWithLinks;

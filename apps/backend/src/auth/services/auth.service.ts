@@ -89,7 +89,7 @@ export class AuthService {
     dto: RegisterDto,
     hashedPassword: string,
   ): Promise<PrismaUser> {
-    return this.prisma.user.create({
+    return await this.prisma.user.create({
       data: {
         firstname: dto.firstname,
         lastname: dto.lastname,

@@ -3,7 +3,11 @@ import { ApiResponse } from '../../common/ApiResponse';
 import { PrismaService } from '../../prisma.service';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { IUser, IUserWithLinks } from '../../interface/IUser';
+import {
+  IUser,
+  IUserWithLinks,
+  IUserWithoutPassword,
+} from '../../interface/IUser';
 import { PaginationLinksType } from '../../type/PaginationLinksType';
 import {
   BadRequestException,
@@ -29,12 +33,12 @@ export class UserService {
           take: limit,
         }),
         this.prisma.user.count(),
-      ]);
+      ] as const);
 
       const totalPages = Math.ceil(totalCount / limit);
 
       const usersWithLinks: IUserWithLinks[] = users.map((user: IUser) => {
-        const sanitizedUser = this.sanitizeUser(user) as IUser;
+        const sanitizedUser = this.sanitizeUser(user);
         return {
           ...sanitizedUser,
           links: this.buildUserLinks(sanitizedUser),
@@ -60,14 +64,18 @@ export class UserService {
   }
 
   async findOne(id: number): Promise<IApiResponse<IUserWithLinks>> {
-    const user = await this.prisma.user.findUnique({ where: { id }, include: { role: true } });
-    if (!user) throw new NotFoundException(`User with id ${id} not found`);
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      include: { role: true },
+    });
+    if (!user)
+      throw new NotFoundException(`User with id ${id.toString()} not found`);
 
-    const sanitizedUser = this.sanitizeUser(user) as IUser;
+    const sanitizedUser = this.sanitizeUser(user);
     return new ApiResponse(
-      { ...sanitizedUser, links: this.buildUserLinks(user) },
+      { ...sanitizedUser, links: this.buildUserLinks(sanitizedUser) },
       undefined,
-      `User ${id} retrieved successfully`,
+      `User ${id.toString()} retrieved successfully`,
     );
   }
 
@@ -97,7 +105,7 @@ export class UserService {
         },
       });
 
-      const sanitizedUser = this.sanitizeUser(user) as IUser;
+      const sanitizedUser = this.sanitizeUser(user);
       return new ApiResponse(
         { ...sanitizedUser, links: this.buildUserLinks(sanitizedUser) },
         undefined,
@@ -111,9 +119,7 @@ export class UserService {
   async update(
     id: number,
     dto: UpdateUserDto,
-  ): Promise<
-    IApiResponse<Omit<IUserWithLinks, 'password'> | undefined> | undefined
-  > {
+  ): Promise<IApiResponse<IUserWithoutPassword | undefined> | undefined> {
     try {
       await this.findOne(id);
       const updated = await this.prisma.user.update({
@@ -121,7 +127,7 @@ export class UserService {
         data: dto,
       });
 
-      const sanitizedUser = this.sanitizeUser(updated) as IUser;
+      const sanitizedUser = this.sanitizeUser(updated);
       return new ApiResponse(
         { ...sanitizedUser, links: this.buildUserLinks(sanitizedUser) },
         undefined,
@@ -140,7 +146,7 @@ export class UserService {
       return new ApiResponse(
         undefined,
         undefined,
-        `User ${id} deleted successfully`,
+        `User ${id.toString()} deleted successfully`,
       );
     } catch (error) {
       throw new BadRequestException(
@@ -149,10 +155,10 @@ export class UserService {
     }
   }
 
-  private buildUserLinks(user: IUser) {
+  private buildUserLinks(user: IUserWithoutPassword) {
     return {
-      self: `/users/${user.id}`,
-      role: `/roles/${user.role_id}`,
+      self: `/users/${user.id.toString()}`,
+      role: `/roles/${user.role_id.toString()}`,
     };
   }
 
@@ -162,7 +168,8 @@ export class UserService {
     limit: number,
     totalPages: number,
   ) {
-    const buildLink = (p: number) => `${baseUrl}?page=${p}&limit=${limit}`;
+    const buildLink = (p: number) =>
+      `${baseUrl}?page=${p.toString()}&limit=${limit.toString()}`;
     return {
       first: buildLink(1),
       previous: page > 1 ? buildLink(page - 1) : null,
@@ -171,11 +178,11 @@ export class UserService {
     };
   }
 
-  private sanitizeUser(user: IUser[]): Omit<IUser, 'password'>[];
-  private sanitizeUser(user: IUser): Omit<IUser, 'password'>;
+  private sanitizeUser(user: IUser[]): IUserWithoutPassword[];
+  private sanitizeUser(user: IUser): IUserWithoutPassword;
   private sanitizeUser(
     user: IUser | IUser[],
-  ): Omit<IUser, 'password'>[] | Omit<IUser, 'password'> {
+  ): IUserWithoutPassword[] | IUserWithoutPassword {
     if (Array.isArray(user)) {
       return user.map(({ password: _, ...userWithoutPwd }) => userWithoutPwd);
     }

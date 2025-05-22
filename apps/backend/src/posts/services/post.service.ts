@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
 import { IApiResponse } from 'src/interface/IApiResponse';
@@ -13,25 +18,26 @@ import { JwtUtil } from 'src/utils/jwt.util';
 export class PostService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly jwtUtil: JwtUtil
-  ) { }
+    private readonly jwtUtil: JwtUtil,
+  ) {}
 
-  async create(createPostDto: CreatePostDto): Promise<IApiResponse<IPost> | undefined> {
+  async create(
+    createPostDto: CreatePostDto,
+  ): Promise<IApiResponse<IPost> | undefined> {
     try {
       const post = await this.prisma.post.create({
         data: createPostDto,
       });
-      return new ApiResponse(
-        post,
-        undefined,
-        'Post created successfully',
-      );
+      return new ApiResponse(post, undefined, 'Post created successfully');
     } catch (error: unknown) {
       this.handleError(error);
     }
   }
 
-  async findAll(page: number, limit: number): Promise<IApiResponse<IPostWithLinks[]> | undefined> {
+  async findAll(
+    page: number,
+    limit: number,
+  ): Promise<IApiResponse<IPostWithLinks[]> | undefined> {
     try {
       const skip = (page - 1) * limit;
       const [posts, totalCount] = await this.prisma.$transaction([
@@ -44,7 +50,7 @@ export class PostService {
 
       const totalPages = Math.ceil(totalCount / limit);
       if (page > totalPages && totalPages > 0) {
-        throw new NotFoundException(`Page ${page} out of range.`);
+        throw new NotFoundException(`Page ${page.toString()} out of range.`);
       }
       const postsWithLinks: IPostWithLinks[] = posts.map((post) => {
         return {
@@ -75,7 +81,7 @@ export class PostService {
         where: { id },
       });
       if (!post) {
-        throw new NotFoundException(`Post with ID ${id} not found`);
+        throw new NotFoundException(`Post with ID ${id.toString()} not found`);
       }
       return new ApiResponse(
         {
@@ -83,7 +89,7 @@ export class PostService {
           links: this.buildPostLinks(post),
         },
         undefined,
-        `Post ${id} retrieved successfully`,
+        `Post ${id.toString()} retrieved successfully`,
       );
     } catch (error: unknown) {
       this.handleError(error);
@@ -95,7 +101,9 @@ export class PostService {
       const userId = this.getUserIdFromRequest(request);
       const post = await this.findOne(id);
       if (userId !== post?.data.user_id) {
-        throw new UnauthorizedException('You are not authorized to update this post');
+        throw new UnauthorizedException(
+          'You are not authorized to update this post',
+        );
       }
 
       const updatedPost = await this.prisma.post.update({
@@ -109,7 +117,7 @@ export class PostService {
           links: this.buildPostLinks(updatedPost),
         },
         undefined,
-        `Post ${id} updated successfully`,
+        `Post ${id.toString()} updated successfully`,
       );
     } catch (error) {
       this.handleError(error);
@@ -121,7 +129,9 @@ export class PostService {
       const userId = this.getUserIdFromRequest(request);
       const post = await this.findOne(id);
       if (userId !== post?.data.user_id) {
-        throw new UnauthorizedException('You are not authorized to delete this post');
+        throw new UnauthorizedException(
+          'You are not authorized to delete this post',
+        );
       }
       await this.prisma.post.delete({
         where: { id },
@@ -129,7 +139,7 @@ export class PostService {
       return new ApiResponse(
         undefined,
         undefined,
-        `Post ${id} deleted successfully`,
+        `Post ${id.toString()} deleted successfully`,
       );
     } catch (error: unknown) {
       this.handleError(error);
@@ -138,8 +148,8 @@ export class PostService {
 
   private buildPostLinks(post: IPost) {
     return {
-      self: `/posts/${post.id}`,
-      user: `/users/${post.user_id}`,
+      self: `/posts/${post.id.toString()}`,
+      user: `/users/${post.user_id.toString()}`,
     };
   }
 
@@ -149,7 +159,8 @@ export class PostService {
     limit: number,
     totalPages: number,
   ) {
-    const buildLink = (p: number) => `${baseUrl}?page=${p}&limit=${limit}`;
+    const buildLink = (p: number) =>
+      `${baseUrl}?page=${p.toString()}&limit=${limit.toString()}`;
     return {
       first: buildLink(1),
       previous: page > 1 ? buildLink(page - 1) : null,
@@ -166,7 +177,7 @@ export class PostService {
   private getUserIdFromRequest(request: Request): number {
     const authHeader = request.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (!authHeader?.startsWith('Bearer ')) {
       throw new UnauthorizedException('No token provided');
     }
 
@@ -175,11 +186,11 @@ export class PostService {
     let decoded: IVerifiedToken;
     try {
       decoded = this.jwtUtil.verify(token);
-    } catch (err) {
+    } catch (_err) {
       throw new UnauthorizedException('Invalid or expired token');
     }
 
-    if (!decoded?.sub) {
+    if (!decoded.sub) {
       throw new UnauthorizedException('Token is missing user ID');
     }
 

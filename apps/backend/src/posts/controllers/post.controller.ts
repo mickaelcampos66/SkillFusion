@@ -1,16 +1,29 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { PostService } from '../services/post.service';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Request } from 'express';
 
 @ApiTags('Posts')
 @Controller('posts')
 export class PostController {
-  constructor(
-    private readonly postService: PostService
-  ) {}
+  constructor(private readonly postService: PostService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new post' })
@@ -51,7 +64,7 @@ export class PostController {
   async findAll(@Query('page') page: string, @Query('limit') limit: string) {
     const pageNumber = parseInt(page) || 1;
     const limitNumber = parseInt(limit) || 25;
-    return await this.postService.findAll(pageNumber, limitNumber); 
+    return await this.postService.findAll(pageNumber, limitNumber);
   }
 
   @Get(':id')
@@ -95,7 +108,11 @@ export class PostController {
     status: 500,
     description: 'Internal Server Error',
   })
-  async update(@Req() request: Request, @Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
+  async update(
+    @Req() request: Request,
+    @Param('id') id: string,
+    @Body() updatePostDto: UpdatePostDto,
+  ) {
     return await this.postService.update(request, +id, updatePostDto);
   }
 
@@ -121,5 +138,4 @@ export class PostController {
   async remove(@Req() request: Request, @Param('id') id: string) {
     return await this.postService.remove(request, +id);
   }
-
 }

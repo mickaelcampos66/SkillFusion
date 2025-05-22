@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from '../services/user.service';
 import { PrismaService } from '../../prisma.service';
@@ -22,7 +23,7 @@ describe('UserService', () => {
                 .fn()
                 .mockImplementation(
                   ({ where }: { where: Prisma.UserWhereUniqueInput }) => {
-                    if (where?.email) {
+                    if (where.email) {
                       return null;
                     }
                     return mockUser;
@@ -49,24 +50,22 @@ describe('UserService', () => {
   it('should find all users', async () => {
     const result = await service.findAll(1, 25);
     expect(result?.data.length).toBe(1);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(prismaService.user.findMany).toHaveBeenCalled();
   });
 
   it('should find one user', async () => {
     const result = await service.findOne(1);
     expect(result.data.id).toEqual(1);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(prismaService.user.findUnique).toHaveBeenCalledWith({
       where: { id: 1 },
+      include: { role: true },
     });
   });
 
   it('should create a user', async () => {
     const dto = { ...mockUser, password: 'password' };
     const result = await service.create(dto);
-    expect(result?.data?.email).toEqual(mockUser.email);
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(result?.data.email).toEqual(mockUser.email);
     expect(prismaService.user.create).toHaveBeenCalled();
   });
 
@@ -74,14 +73,12 @@ describe('UserService', () => {
     const dto = { firstname: 'UpdatedName' };
     const result = await service.update(1, dto);
     expect(result?.data?.firstname).toEqual('John');
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(prismaService.user.update).toHaveBeenCalled();
   });
 
   it('should delete a user', async () => {
     const result = await service.remove(1);
     expect(result.message).toContain('deleted successfully');
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(prismaService.user.delete).toHaveBeenCalled();
   });
 });

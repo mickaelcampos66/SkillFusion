@@ -27,7 +27,7 @@ export class CategoriesController {
     type: CategoryEntity,
     isArray: true,
   })
-  async findAll(): Promise<Array<CategoryEntity>> {
+  async findAll(): Promise<CategoryEntity[]> {
     const categories = await this.CategoriesService.findAll();
     return categories.map(
       (category: CategoryEntity) => new CategoryEntity(category),
@@ -68,10 +68,7 @@ export class CategoriesController {
     @Param('id') id: number,
     @Body() categories: UpdateCategoriesDto,
   ): Promise<CategoryEntity | MessageUtilType> {
-    const category = (await this.CategoriesService.updateOne(
-      id,
-      categories,
-    )) as CategoryEntity;
+    const category = await this.CategoriesService.updateOne(id, categories);
 
     if (!category) {
       return new MessageUtil(404, false, 'Category not found').toJSON();

@@ -36,7 +36,7 @@ export class CoursesController {
     status: 404,
     description: 'No courses found',
   })
-  findAll(): Promise<Array<CourseDto>> {
+  findAll(): Promise<CourseDto[]> {
     return this.CoursesService.findAll();
   }
 
@@ -136,7 +136,9 @@ export class CoursesController {
     description: 'Courses filtered by category',
     type: [CourseDto],
   })
-  async findByCategory(@Param('categoryId') categoryId: number): Promise<CourseDto[]> {
+  async findByCategory(
+    @Param('categoryId') categoryId: number,
+  ): Promise<CourseDto[]> {
     return await this.CoursesService.findByCategoryId(Number(categoryId));
   }
 }

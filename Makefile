@@ -57,11 +57,29 @@ nest: ## List all Nest commands or pass the parameter "c=" to run a given comman
 	@echo "Running Nest command: $(c)"
 	@$(NEST) $(c)
 
+prisma-generate: ## Generate Prisma client
+	@$(DOCKER_RUN) backend yarn prisma generate
+
 migrations: ## Run database migrations
-	@$(BACKEND_CONT) yarn prisma migrate deploy
+	@$(DOCKER_RUN) backend yarn prisma migrate deploy
 
 fixtures: ## Run database fixtures
 	@$(BACKEND_CONT) yarn seed
+
+tsc-backend: ## Run TypeScript check on the backend
+	@$(DOCKER_RUN) backend yarn tsc
+
+lint-fix-backend: ## Run ESLint on the backend
+	@$(BACKEND_CONT) yarn lint:fix
+
+lint-backend: ## Run ESLint on the backend
+	@$(DOCKER_RUN) backend yarn lint
+
+test-backend: ## Run tests on the backend, pass the parameter "c=" to run a specific test, example: make test-backend c=-u (to update snapshots)
+	@$(BACKEND_CONT) yarn test
+
+test-backend-ci: ## Run tests on the backend in CI mode
+	@$(DOCKER_RUN) backend yarn test:ci
 
 ## —— Next.js Frontend 🧙‍♂️ ———————————————————————————————————————————————————————————————
 tsc-frontend: ## Run TypeScript check on the frontend
