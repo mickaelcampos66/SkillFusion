@@ -15,15 +15,35 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { IApiResponse } from 'src/interface/IApiResponse';
+import { MetaType } from '../../type/MetaType';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private sanitizeUser(user: IUser): IUserWithoutPassword {
+    const { password, ...sanitizedUser } = user;
+    return sanitizedUser;
+  }
+
+  private buildUserLinks(user: IUserWithoutPassword) {
+    return {
+      self: `/users/${user.id}`,
+      role: `/roles/${user.role_id}`,
+    };
+  }
+
+  private buildUserWithLinks(user: IUserWithoutPassword): IUserWithLinks {
+    return {
+      ...user,
+      links: this.buildUserLinks(user),
+    };
+  }
+
   async findAll(
     page: number,
     limit: number,
-  ): Promise<IApiResponse<IUserWithLinks[]> | undefined> {
+  ): Promise<IApiResponse<IUserWithLinks[]>> {
     try {
       const skip = (page - 1) * limit;
 
@@ -36,30 +56,25 @@ export class UserService {
       ] as const);
 
       const totalPages = Math.ceil(totalCount / limit);
+      const sanitizedUsers = users.map(user => this.sanitizeUser(user));
+      const usersWithLinks = sanitizedUsers.map(user => this.buildUserWithLinks(user));
 
-      const usersWithLinks: IUserWithLinks[] = users.map((user: IUser) => {
-        const sanitizedUser = this.sanitizeUser(user);
-        return {
-          ...sanitizedUser,
-          links: this.buildUserLinks(sanitizedUser),
-        };
-      });
-
-      const paginationLinks: PaginationLinksType = this.buildPaginationLinks(
-        '/users',
+      const meta: MetaType = {
         page,
         limit,
-        totalPages,
-      );
+        total_count: totalCount,
+        total_pages: totalPages,
+      };
 
       return new ApiResponse(
         usersWithLinks,
-        { page, limit, total_count: totalCount, total_pages: totalPages },
+        meta,
         'Users retrieved successfully',
-        paginationLinks,
       );
     } catch (error) {
-      this.handleError(error);
+      throw new BadRequestException(
+        error instanceof Error ? error.message : 'An error occurred while fetching users',
+      );
     }
   }
 
@@ -68,24 +83,27 @@ export class UserService {
       where: { id },
       include: { role: true },
     });
-    if (!user)
+    
+    if (!user) {
       throw new NotFoundException(`User with id ${id.toString()} not found`);
+    }
 
     const sanitizedUser = this.sanitizeUser(user);
+    const userWithLinks = this.buildUserWithLinks(sanitizedUser);
+
     return new ApiResponse(
-      { ...sanitizedUser, links: this.buildUserLinks(sanitizedUser) },
+      userWithLinks,
       undefined,
       `User ${id.toString()} retrieved successfully`,
     );
   }
 
-  async create(
-    dto: CreateUserDto,
-  ): Promise<IApiResponse<IUserWithLinks> | undefined> {
+  async create(dto: CreateUserDto): Promise<IApiResponse<IUserWithLinks>> {
     try {
       const existingUser = await this.prisma.user.findUnique({
         where: { email: dto.email },
       });
+      
       if (existingUser) {
         throw new BadRequestException(`Email "${dto.email}" is already in use`);
       }
@@ -106,20 +124,24 @@ export class UserService {
       });
 
       const sanitizedUser = this.sanitizeUser(user);
+      const userWithLinks = this.buildUserWithLinks(sanitizedUser);
+
       return new ApiResponse(
-        { ...sanitizedUser, links: this.buildUserLinks(sanitizedUser) },
+        userWithLinks,
         undefined,
         'User created successfully',
       );
     } catch (error) {
-      this.handleError(error);
+      throw new BadRequestException(
+        error instanceof Error ? error.message : 'An error occurred while creating user',
+      );
     }
   }
 
   async update(
     id: number,
     dto: UpdateUserDto,
-  ): Promise<IApiResponse<IUserWithoutPassword | undefined> | undefined> {
+  ): Promise<IApiResponse<IUserWithLinks>> {
     try {
       await this.findOne(id);
       const updated = await this.prisma.user.update({
@@ -128,17 +150,21 @@ export class UserService {
       });
 
       const sanitizedUser = this.sanitizeUser(updated);
+      const userWithLinks = this.buildUserWithLinks(sanitizedUser);
+
       return new ApiResponse(
-        { ...sanitizedUser, links: this.buildUserLinks(sanitizedUser) },
+        userWithLinks,
         undefined,
         'User updated successfully',
       );
     } catch (error) {
-      this.handleError(error);
+      throw new BadRequestException(
+        error instanceof Error ? error.message : 'An error occurred while updating user',
+      );
     }
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<IApiResponse<void>> {
     try {
       await this.findOne(id);
       await this.prisma.user.delete({ where: { id } });
@@ -150,49 +176,8 @@ export class UserService {
       );
     } catch (error) {
       throw new BadRequestException(
-        error instanceof Error ? error.message : JSON.stringify(error),
+        error instanceof Error ? error.message : 'An error occurred while deleting user',
       );
     }
-  }
-
-  private buildUserLinks(user: IUserWithoutPassword) {
-    return {
-      self: `/users/${user.id.toString()}`,
-      role: `/roles/${user.role_id.toString()}`,
-    };
-  }
-
-  private buildPaginationLinks(
-    baseUrl: string,
-    page: number,
-    limit: number,
-    totalPages: number,
-  ) {
-    const buildLink = (p: number) =>
-      `${baseUrl}?page=${p.toString()}&limit=${limit.toString()}`;
-    return {
-      first: buildLink(1),
-      previous: page > 1 ? buildLink(page - 1) : null,
-      next: page < totalPages ? buildLink(page + 1) : null,
-      last: buildLink(totalPages),
-    };
-  }
-
-  private sanitizeUser(user: IUser[]): IUserWithoutPassword[];
-  private sanitizeUser(user: IUser): IUserWithoutPassword;
-  private sanitizeUser(
-    user: IUser | IUser[],
-  ): IUserWithoutPassword[] | IUserWithoutPassword {
-    if (Array.isArray(user)) {
-      return user.map(({ password: _, ...userWithoutPwd }) => userWithoutPwd);
-    }
-    const { password: _, ...userWithoutPwd } = user;
-    return userWithoutPwd;
-  }
-
-  private handleError(error: unknown) {
-    throw error instanceof Error
-      ? new BadRequestException(error.message)
-      : new BadRequestException(JSON.stringify(error));
   }
 }
