@@ -35,6 +35,18 @@ export class CoursesService {
     return courses.map((course) => this.mapCourseToDto(course));
   }
 
+  async findAllByUserId(userId: number): Promise<CourseDto[]> {
+    const courses = await this.PrismaService.course.findMany({
+      where: { created_by: userId },
+      include: {
+        courseCategories: {
+          include: { category: true },
+        },
+      },
+    });
+    return courses.map((course) => this.mapCourseToDto(course));
+  }
+
   async findOne(id: number): Promise<CourseDto | null> {
     const course = await this.PrismaService.course.findUnique({
       where: { id },
