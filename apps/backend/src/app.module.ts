@@ -7,7 +7,6 @@ import { CategoriesModule } from './categories/modules/categories.module';
 import { HealthChkModule } from './healthchk/modules/healthchk.module';
 import { PostModule } from './posts/modules/post.module';
 import { PrismaModule } from './prisma.module';
-import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -18,6 +17,7 @@ import { CommentsModule } from './comments/comments.module';
     CommentsModule,
     CategoriesModule,
     PostModule,
+    PrismaModule,
     PrismaModule,
   ],
   controllers: [],
