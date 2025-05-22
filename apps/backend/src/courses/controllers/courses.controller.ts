@@ -122,4 +122,21 @@ export class CoursesController {
   deleteOne(@Param('id') id: number) {
     return this.CoursesService.deleteOne(id);
   }
+
+  @Get('/category/:categoryId')
+  @ApiOperation({ summary: 'Get all courses by category ID' })
+  @ApiParam({
+    name: 'categoryId',
+    required: true,
+    description: 'The ID of the category to filter courses by',
+    type: Number,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Courses filtered by category',
+    type: [CourseDto],
+  })
+  async findByCategory(@Param('categoryId') categoryId: number): Promise<CourseDto[]> {
+    return await this.CoursesService.findByCategoryId(Number(categoryId));
+  }
 }

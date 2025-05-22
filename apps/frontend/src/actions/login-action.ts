@@ -3,12 +3,8 @@
 import { env } from '~/env.config'
 import { createSession } from '@/lib/session'
 import { redirect } from 'next/navigation'
-
-type LoginFormState = {
-  message: string
-  fields?: Record<string, string>
-  issues?: string[]
-}
+import type { FormState, ErrorType } from '@/types/form-types'
+import { handleError } from '@/lib/utils'
 
 type LoginResult = {
   message: string
@@ -18,16 +14,10 @@ type LoginResult = {
   lastname: string
 }
 
-type ErrorType = {
-  message: string | string[]
-  error: string
-  statusCode: number
-}
-
 export async function loginAction(
-  _prevState: LoginFormState,
+  _prevState: FormState,
   data: FormData,
-): Promise<LoginFormState> {
+): Promise<FormState> {
   const formData = Object.fromEntries(data)
 
   const fields: Record<string, string> = {}
@@ -48,28 +38,16 @@ export async function loginAction(
     })
 
     if (!response.ok) {
-      const errorData: ErrorType = await response.json()
+      const err: ErrorType = await response.json()
 
-      return {
-        message: errorData.error,
-        fields,
-        issues: Array.isArray(errorData.message)
-          ? errorData.message
-          : [errorData.message],
-      }
+      return handleError(err, fields)
     }
 
     const result: LoginResult = await response.json()
     await createSession(result)
   }
   catch (error) {
-    return {
-      message: 'An error occurred while logging in',
-      fields,
-      issues: [
-        error instanceof Error ? error.message : 'Unknown error, please try again, or contact support',
-      ],
-    }
+    return handleError(error, fields)
   }
   redirect('/')
 }

@@ -3,18 +3,8 @@
 import { createSession } from '@/lib/session'
 import { redirect } from 'next/navigation'
 import { env } from '~/env.config'
-
-type RegisterFormState = {
-  message: string
-  fields?: Record<string, string>
-  issues?: string[]
-}
-
-type ErrorType = {
-  message: string | string[]
-  error: string
-  statusCode: number
-}
+import type { FormState, ErrorType } from '@/types/form-types'
+import { handleError } from '@/lib/utils'
 
 export type RegisterUserResult = {
   message: string
@@ -25,9 +15,9 @@ export type RegisterUserResult = {
 }
 
 export async function registerAction(
-  _prevState: RegisterFormState,
+  _prevState: FormState,
   data: FormData,
-): Promise<RegisterFormState> {
+): Promise<FormState> {
   const formData = Object.fromEntries(data)
 
   const fields: Record<string, string> = {}
@@ -54,13 +44,9 @@ export async function registerAction(
     })
 
     if (!response.ok) {
-      const errorData: ErrorType = await response.json()
+      const err: ErrorType = await response.json()
 
-      return {
-        message: errorData.error,
-        fields,
-        issues: Array.isArray(errorData.message) ? errorData.message : [errorData.message],
-      }
+      return handleError(err, fields)
     }
 
     const result: RegisterUserResult = await response.json()
@@ -68,12 +54,7 @@ export async function registerAction(
     await createSession(result)
   }
   catch (error) {
-    return {
-      message: 'An error occurred while registering',
-      fields,
-      issues: [error instanceof Error ? error.message : 'Unknown error, please try again, or contact support'],
-    }
+    return handleError(error, fields)
   }
-
   redirect('/')
 }
