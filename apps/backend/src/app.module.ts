@@ -7,6 +7,7 @@ import { CategoriesModule } from './categories/modules/categories.module';
 import { HealthChkModule } from './healthchk/modules/healthchk.module';
 import { PostModule } from './posts/modules/post.module';
 import { PrismaModule } from './prisma.module';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { PrismaModule } from './prisma.module';
     UserModule,
     CoursesModule,
     HealthChkModule,
+    CommentsModule,
     CategoriesModule,
     PostModule,
     PrismaModule,
