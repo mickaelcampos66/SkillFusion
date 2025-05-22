@@ -22,7 +22,7 @@ export default async function Home() {
       <div className="max-w-6xl mx-auto pb-4 mt-8 px-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
           {courses.map((course: Course, index: number) => (
-            <CourseCard key={index} {...course} />
+            <CourseCard key={index} {...course} link={`/courses/${course.id}`} />
           ))}
         </div>
       </div>

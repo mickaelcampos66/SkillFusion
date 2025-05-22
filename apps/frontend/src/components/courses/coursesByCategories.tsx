@@ -82,7 +82,7 @@ export default function CoursesByCategoriesClient() {
         {courses.length > 0
           ? (
               courses.map((course, index) => (
-                <CourseCard key={index} {...course} />
+                <CourseCard key={index} {...course} link={`/courses/${course.id}`} />
               ))
             )
           : (

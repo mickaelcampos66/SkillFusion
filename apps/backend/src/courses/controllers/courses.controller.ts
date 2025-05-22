@@ -40,6 +40,27 @@ export class CoursesController {
     return this.CoursesService.findAll();
   }
 
+  @Get('user/:userId')
+  @ApiOperation({ summary: 'Get all courses by user ID' })
+  @ApiParam({
+    name: 'userId',
+    required: true,
+    description: 'The ID of the user to retrieve courses for',
+    type: Number,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved the list of courses',
+    type: [CourseDto],
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'No courses found',
+  })
+  findAllMyCourses(@Param('userId') userId: number): Promise<CourseDto[]> {
+    return this.CoursesService.findAllByUserId(userId);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get a specific course by ID' })
   @ApiParam({
