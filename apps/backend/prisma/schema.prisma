@@ -24,10 +24,10 @@ model User {
   role_id      Int
   role         Role      @relation(fields: [role_id], references: [id])
   posts        Post[]
-  messages     Message[]
+  comments     Comment[]
   courses      Course[]  @relation("CreatedCourses")
   created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt @default(now())
+  updated_at   DateTime  @default(now()) @updatedAt
 }
 
 model Role {
@@ -35,7 +35,7 @@ model Role {
   name       String
   users      User[]
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt @default(now())
+  updated_at DateTime @default(now()) @updatedAt
 }
 
 model Category {
@@ -43,7 +43,7 @@ model Category {
   name             String           @unique
   courseCategories CourseCategory[]
   created_at       DateTime         @default(now())
-  updated_at       DateTime         @updatedAt @default(now())
+  updated_at       DateTime         @default(now()) @updatedAt
 }
 
 model Course {
@@ -57,7 +57,7 @@ model Course {
   creator          User             @relation("CreatedCourses", fields: [created_by], references: [id])
   courseCategories CourseCategory[]
   created_at       DateTime         @default(now())
-  updated_at       DateTime         @updatedAt @default(now())
+  updated_at       DateTime         @default(now()) @updatedAt
 }
 
 model CourseCategory {
@@ -67,7 +67,7 @@ model CourseCategory {
   course      Course   @relation(fields: [course_id], references: [id])
   category    Category @relation(fields: [category_id], references: [id])
   created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt @default(now())
+  updated_at  DateTime @default(now()) @updatedAt
 
   @@unique([course_id, category_id])
 }
@@ -78,12 +78,12 @@ model Post {
   content    String
   user_id    Int
   user       User      @relation(fields: [user_id], references: [id])
-  messages   Message[]
+  comments   Comment[]
   created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt @default(now())
+  updated_at DateTime  @default(now()) @updatedAt
 }
 
-model Message {
+model Comment {
   id         Int      @id @default(autoincrement())
   content    String
   user_id    Int
@@ -91,5 +91,5 @@ model Message {
   user       User     @relation(fields: [user_id], references: [id])
   post       Post     @relation(fields: [post_id], references: [id])
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt @default(now())
+  updated_at DateTime @default(now()) @updatedAt
 }
