@@ -12,7 +12,7 @@ export interface ICourse {
   updated_at?: Date | null;
   level: string;
   created_by: number;
-  creator: IUser;
+  creator?: IUser;
   courseCategories: ICourseCategory[];
 }
 

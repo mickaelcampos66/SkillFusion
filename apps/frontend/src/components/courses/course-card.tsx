@@ -6,7 +6,7 @@ import { Course } from '@/types/course'
 
 export function CourseCard({ id, name, description, image }: Course) {
   return (
-    <Card className="h-full w-full sm:w-[300px] rounded-2xl overflow-hidden shadow-md flex flex-col">
+    <Card className="h-full w-full sm:w-[280px] rounded-2xl overflow-hidden shadow-md flex flex-col">
       <Image
         src={image}
         alt={name}

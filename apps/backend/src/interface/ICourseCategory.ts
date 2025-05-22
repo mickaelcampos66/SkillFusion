@@ -5,6 +5,6 @@ export interface ICourseCategory {
   id: number;
   course_id: number;
   category_id: number;
-  course: ICourse;
+  course?: ICourse;
   category: ICategory;
 }
