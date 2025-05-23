@@ -9,47 +9,21 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { formatDate } from '@/lib/utils'
-import { PostFormModal } from '@/components/forum-post-form-modal'
+import { env } from '~/env.config'
+import { PostsResponse } from '@/types/post'
+import { ForumPostForm } from '@/components/forms/forum-post-form'
+import { getSession } from '@/lib/session'
 
-export const posts = [
-  {
-    id: 1,
-    title: 'Comment réparer une étagère cassée ?',
-    content: 'Bonjour, j\'ai une étagère en bois qui s\'est cassée. Avez-vous des conseils pour la réparer ?',
-    created_at: new Date('2025-04-01T10:00:00Z'),
-    updated_at: new Date('2025-04-01T10:00:00Z'),
-    user_id: 1,
-  },
-  {
-    id: 2,
-    title: 'Idées pour décorer une petite chambre',
-    content: 'Je cherche des idées pour décorer une petite chambre sans trop encombrer l\'espace.',
-    created_at: new Date('2025-04-15T14:30:00Z'),
-    updated_at: new Date('2025-04-15T14:30:00Z'),
-    user_id: 2,
-  },
-]
+async function getPosts(): Promise<PostsResponse> {
+  const posts = await fetch(`${env.SERVER_API_URL}/api/posts`)
+  if (!posts.ok) return { data: [] }
+  return posts.json()
+}
 
-export const messages = [
-  {
-    id: 1,
-    content: 'Vous pouvez utiliser de la colle à bois et des serre-joints pour réparer l\'étagère.',
-    created_at: '2025-04-01T11:00:00Z',
-    updated_at: '2025-04-01T11:00:00Z',
-    user_id: 2,
-    post_id: 1,
-  },
-  {
-    id: 2,
-    content: 'Essayez d\'ajouter des miroirs pour donner une impression d\'espace.',
-    created_at: '2025-04-15T15:00:00Z',
-    updated_at: '2025-04-15T15:00:00Z',
-    user_id: 3,
-    post_id: 2,
-  },
-]
+export default async function ForumPage() {
+  const { data } = await getPosts()
+  const user = await getSession()
 
-export default function ForumPage() {
   return (
     <>
       <div className="relative w-full h-48 sm:h-64 md:h-80 lg:h-96">
@@ -77,10 +51,7 @@ export default function ForumPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {posts.map((post) => {
-                const postMessages = messages.filter(message => message.post_id === post.id)
-                const lastMessage = postMessages[postMessages.length - 1]
-
+              {data.map((post) => {
                 return (
                   <TableRow
                     key={post.id}
@@ -88,10 +59,10 @@ export default function ForumPage() {
                     href={`/forum/post/${post.id}`}
                   >
                     <TableCell className="font-medium">{post.title}</TableCell>
-                    <TableCell>{`Utilisateur ${post.user_id}`}</TableCell>
-                    <TableCell>{postMessages.length}</TableCell>
+                    <TableCell>{post.user?.firstname} {post.user?.lastname}</TableCell>
+                    <TableCell>{post.commentsCount}</TableCell>
                     <TableCell className="text-right">
-                      {lastMessage ? formatDate(lastMessage.created_at) : 'Aucun message'}
+                      {post.lastCommentDate ? formatDate(post.lastCommentDate) : 'Aucun message'}
                     </TableCell>
                   </TableRow>
                 )
@@ -100,7 +71,7 @@ export default function ForumPage() {
           </Table>
         </section>
         <Spacing />
-        <PostFormModal />
+        <ForumPostForm isLoggedIn={!!user} />
         <Spacing />
       </main>
     </>

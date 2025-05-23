@@ -18,35 +18,41 @@ import { ErrorMessage } from '@/components/ui/error-message'
 import { responseForumAction } from '@/actions/reponse-forum-action'
 import { responseForumSchema, type ResponseForumSchema } from '@/lib/schemas/response-forum-schema'
 import { Textarea } from '@/components/ui/textarea'
+import { useParams } from 'next/navigation'
 
 export function ResponseForumForm({ isConnected }: { isConnected: boolean }) {
-  const [state, formAction] = React.useActionState(responseForumAction, {
+  const { id } = useParams()
+  const [state, formAction, pending] = React.useActionState(responseForumAction, {
     message: '',
   })
 
   const form = useForm<ResponseForumSchema>({
     resolver: zodResolver(responseForumSchema),
     defaultValues: {
-      message: '',
+      comment: '',
       ...(state?.fields ?? {}),
     },
   })
 
   const formRef = React.useRef<HTMLFormElement>(null)
 
+  React.useEffect(() => {
+    if (!pending && !state?.message && !state?.issues) {
+      form.reset()
+    }
+  }, [pending, state?.message, state?.issues, form])
+
   return (
     <Form {...form}>
       <form
         ref={formRef}
         action={formAction}
-        onSubmit={(event) => {
-          event.preventDefault()
-          form.handleSubmit(() => {
-            React.startTransition(() => {
-              formAction(new FormData(formRef.current!))
-            })
-          })(event)
-        }}
+        onSubmit={form.handleSubmit(() => {
+          React.startTransition(() => {
+            const data = new FormData(formRef.current!)
+            formAction(data)
+          })
+        })}
         className="flex flex-col gap-2 w-full"
       >
         {state?.message && (
@@ -67,7 +73,7 @@ export function ResponseForumForm({ isConnected }: { isConnected: boolean }) {
         )}
         <FormField
           control={form.control}
-          name="message"
+          name="comment"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Répondre</FormLabel>
@@ -81,7 +87,10 @@ export function ResponseForumForm({ isConnected }: { isConnected: boolean }) {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={!isConnected} className="self-end-safe max-md:w-full">Répondre</Button>
+        <input type="hidden" name="post_id" value={id} />
+        <Button type="submit" disabled={!isConnected || pending} className="self-end-safe max-md:w-full">
+          {pending ? 'Envoi...' : 'Envoyer'}
+        </Button>
       </form>
     </Form>
   )

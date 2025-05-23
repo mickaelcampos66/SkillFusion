@@ -2,15 +2,15 @@
 
 import { env } from '~/env.config'
 import { getSession } from '@/lib/session'
-import type { FormState, ErrorType } from '@/types/form-types'
+import type { FormState } from '@/types/form-types'
 import { postSchema } from '@/lib/schemas/post-schema'
 import { revalidatePath } from 'next/cache'
 import { handleError } from '@/lib/utils'
 
 export async function createPostAction(
-  _prevState: FormState,
+  _prevState: FormState | undefined,
   data: FormData,
-): Promise<FormState> {
+): Promise<FormState | undefined> {
   const user = await getSession()
 
   if (!user) {
@@ -19,12 +19,9 @@ export async function createPostAction(
     }
   }
 
-  const formData = Object.fromEntries(data)
-
-  const fields: Record<string, string> = {}
-  for (const key of Object.keys(formData)) {
-    fields[key] = formData[key].toString()
-  }
+  const fields = Object.fromEntries(
+    [...data].map(([key, value]) => [key, value.toString()]),
+  )
   const parsedFields = postSchema.safeParse(fields).data
 
   try {
@@ -37,12 +34,12 @@ export async function createPostAction(
       body: JSON.stringify({
         title: parsedFields?.title,
         content: parsedFields?.content,
+        user_id: user.id,
       }),
     })
 
     if (!response.ok) {
-      const err: ErrorType = await response.json()
-
+      const err = await response.json()
       return handleError(err, fields)
     }
   }
@@ -50,7 +47,4 @@ export async function createPostAction(
     return handleError(error, fields)
   }
   revalidatePath('/forum')
-  return {
-    message: 'La question a été créé avec succès',
-  }
 }

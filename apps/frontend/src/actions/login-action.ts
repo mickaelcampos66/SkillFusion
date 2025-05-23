@@ -3,7 +3,7 @@
 import { env } from '~/env.config'
 import { createSession } from '@/lib/session'
 import { redirect } from 'next/navigation'
-import type { FormState, ErrorType } from '@/types/form-types'
+import type { FormState } from '@/types/form-types'
 import { handleError } from '@/lib/utils'
 
 type LoginResult = {
@@ -38,8 +38,7 @@ export async function loginAction(
     })
 
     if (!response.ok) {
-      const err: ErrorType = await response.json()
-
+      const err = await response.json()
       return handleError(err, fields)
     }
 

@@ -1,17 +1,32 @@
 import { Spacing } from '@/components/ui/spacing'
 import Image from 'next/image'
-import { posts, messages } from '../../page'
 import { Card, CardContent } from '@/components/ui/card'
 import { formatDate } from '@/lib/utils'
 import { ResponseForumForm } from '@/components/forms/response-forum-form'
 import { getSession } from '@/lib/session'
+import { env } from '~/env.config'
+import type { PostResponse } from '@/types/post'
+
+async function getPost(id: number): Promise<PostResponse | null> {
+  const post = await fetch(`${env.SERVER_API_URL}/api/posts/${id}`)
+  if (!post.ok) return null
+  return post.json()
+}
 
 export default async function PostPage({ params }: Readonly<{ params: Promise<{ id: string }> }>) {
-  const user = await getSession()
   const { id } = await params
-  const postId = Number.parseInt(id)
-  const post = posts.find(post => post.id === postId)
-  const postMessages = messages.filter(message => message.post_id === postId)
+  const post = await getPost(Number.parseInt(id))
+  const user = await getSession()
+
+  if (!post || !post.data) {
+    return (
+      <main className="container flex flex-col gap-4">
+        <h1>Post non trouvé</h1>
+        <p>Le post n&apos;a pas été trouvé ou il a été supprimé.</p>
+      </main>
+    )
+  }
+  const { data } = post
 
   return (
     <>
@@ -26,28 +41,32 @@ export default async function PostPage({ params }: Readonly<{ params: Promise<{ 
       </div>
       <Spacing size="xs" />
       <main className="container flex flex-col gap-4">
-        <h1>{post?.title}</h1>
+        <h1>{data?.title}</h1>
         <Card className="w-full py-4">
           <CardContent>
-            <p>{post?.content}</p>
+            <p className="whitespace-pre-line">{data?.content}</p>
           </CardContent>
         </Card>
+        <div className="flex gap-4 justify-end">
+          <p className="text-sm font-medium">{data.user.firstname} {data.user.lastname}</p>
+          <p className="text-sm text-muted-foreground">{formatDate(data.created_at)}</p>
+        </div>
         <h2 className="font-medium mt-2">Réponses</h2>
         <section className="w-full flex flex-col gap-4">
-          {postMessages.length > 0
+          {data.comments && data.comments.length > 0
             ? (
-                postMessages.map(message => (
-                  <div key={message.id}>
+                data.comments.map(comment => (
+                  <div key={comment.id}>
                     <Card className="gap-0 py-4">
                       <CardContent>
                         <>
-                          <p>{message.content}</p>
+                          <p className="whitespace-pre-line">{comment.content}</p>
                         </>
                       </CardContent>
                     </Card>
                     <div className="flex gap-4 justify-end py-1">
-                      <p className="text-sm font-medium">Utilisateur {message.user_id}</p>
-                      <p className="text-sm text-muted-foreground">{formatDate(message.created_at)}</p>
+                      <p className="text-sm font-medium">{comment.user.firstname} {comment.user.lastname}</p>
+                      <p className="text-sm text-muted-foreground">{formatDate(comment.created_at)}</p>
                     </div>
                   </div>
                 ))

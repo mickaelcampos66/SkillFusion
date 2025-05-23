@@ -3,7 +3,7 @@
 import { createSession } from '@/lib/session'
 import { redirect } from 'next/navigation'
 import { env } from '~/env.config'
-import type { FormState, ErrorType } from '@/types/form-types'
+import type { FormState } from '@/types/form-types'
 import { handleError } from '@/lib/utils'
 
 export type RegisterUserResult = {
@@ -44,8 +44,7 @@ export async function registerAction(
     })
 
     if (!response.ok) {
-      const err: ErrorType = await response.json()
-
+      const err = await response.json()
       return handleError(err, fields)
     }
 

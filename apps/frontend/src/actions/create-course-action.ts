@@ -6,7 +6,7 @@ import { getSession } from '@/lib/session'
 import type { Course } from '@/types/course'
 import { createCourseSchema } from '@/lib/schemas/create-course-schema'
 import { handleError } from '@/lib/utils'
-import type { ErrorType, FormState } from '@/types/form-types'
+import type { FormState } from '@/types/form-types'
 
 export async function createCourseAction(
   _prevState: FormState,
@@ -39,7 +39,7 @@ export async function createCourseAction(
     if (!response.ok) {
       console.log('Error response:', response)
 
-      const err: ErrorType = await response.json()
+      const err = await response.json()
       return handleError(err, fields)
     }
 

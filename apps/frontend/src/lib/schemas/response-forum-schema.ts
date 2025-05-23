@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 const responseForumSchema = z.object({
-  message: z
+  comment: z
     .string()
     .trim()
     .min(1, { message: 'Response is required' }),

@@ -11,6 +11,8 @@ export interface IPost {
   user_id: number;
   user?: IUser;
   messages?: IMessage[];
+  commentsCount?: number;
+  lastCommentDate?: Date;
 }
 
 export interface IPostWithLinks extends IPost, IWithLinks {}

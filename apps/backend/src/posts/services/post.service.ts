@@ -44,6 +44,16 @@ export class PostService {
         this.prisma.post.findMany({
           skip,
           take: limit,
+          orderBy: { created_at: 'desc' },
+          include: {
+            user: true,
+            _count: { select: { comments: true } },
+            comments: {
+              orderBy: { created_at: 'desc' },
+              take: 1,
+              select: { created_at: true },
+            },
+          },
         }),
         this.prisma.post.count(),
       ]);
@@ -55,6 +65,8 @@ export class PostService {
       const postsWithLinks: IPostWithLinks[] = posts.map((post) => {
         return {
           ...post,
+          lastCommentDate: post.comments[0]?.created_at ?? null,
+          commentsCount: post._count.comments,
           links: this.buildPostLinks(post),
         };
       });
@@ -79,6 +91,14 @@ export class PostService {
     try {
       const post = await this.prisma.post.findUnique({
         where: { id },
+        include: {
+          comments: {
+            include: {
+              user: true,
+            },
+          },
+          user: true,
+        },
       });
       if (!post) {
         throw new NotFoundException(`Post with ID ${id.toString()} not found`);
