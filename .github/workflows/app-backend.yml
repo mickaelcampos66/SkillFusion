@@ -1,0 +1,42 @@
+name: App Backend
+
+on:
+  workflow_call:
+
+jobs:
+  ci:
+    name: CI Backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup
+        with:
+          init_env: test
+
+      - name: Build Backend Docker image
+        uses: ./.github/actions/docker-build
+        with:
+          service: backend
+          target: test
+
+      - name: Install dependencies
+        run: make install-back
+
+      - name: Run migrations
+        run: make migrations
+
+      - name: Generate Prisma Client
+        run: make prisma-generate
+
+      - name: Run ESLint
+        run: make lint-backend
+
+      - name: Run Typescript check
+        run: make tsc-backend
+
+      - name: Run Tests
+        run: make test-backend-ci
+
+      - uses: ./.github/actions/cleanup

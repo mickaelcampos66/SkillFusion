@@ -1,0 +1,8 @@
+name: Cleanup
+description: Cleanup docker containers
+
+runs:
+  using: 'composite'
+  steps:
+    - run: docker compose down
+      shell: bash

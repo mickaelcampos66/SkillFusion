@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Spacing renders correctly with default size when no size is provided 1`] = `
+<DocumentFragment>
+  <div
+    class="h-8 lg:h-16"
+  />
+</DocumentFragment>
+`;
+
+exports[`Spacing renders correctly with size="lg" 1`] = `
+<DocumentFragment>
+  <div
+    class="h-24 lg:h-32"
+  />
+</DocumentFragment>
+`;
+
+exports[`Spacing renders correctly with size="md" 1`] = `
+<DocumentFragment>
+  <div
+    class="h-16 lg:h-24"
+  />
+</DocumentFragment>
+`;
+
+exports[`Spacing renders correctly with size="sm" 1`] = `
+<DocumentFragment>
+  <div
+    class="h-8 lg:h-16"
+  />
+</DocumentFragment>
+`;
+
+exports[`Spacing renders correctly with size="xs" 1`] = `
+<DocumentFragment>
+  <div
+    class="h-4"
+  />
+</DocumentFragment>
+`;

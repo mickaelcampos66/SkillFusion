@@ -1,0 +1,5 @@
+dist
+.dockerignore
+node_modules
+*.log
+*.md

@@ -1,0 +1,35 @@
+name: Docker Build (with cache)
+description: Build Docker images
+
+inputs:
+  service:
+    description: 'Service name (frontend or backend)'
+    required: true
+  target:
+    description: 'Docker build target (test or production)'
+    required: true
+    default: test
+
+runs:
+  using: composite
+  steps:
+    - uses: docker/setup-buildx-action@v3
+
+    - uses: actions/cache@v4
+      with:
+        path: /tmp/.buildx-cache-${{ inputs.service }}
+        key: ${{ runner.os }}-${{ inputs.service }}-${{ hashFiles('apps/${{ inputs.service }}/**/*', 'docker/${{ inputs.service }}/Dockerfile') }}
+        restore-keys: |
+          ${{ runner.os }}-${{ inputs.service }}-
+
+    - run: |
+        docker buildx build \
+          -t ${{ inputs.service }}:test-latest \
+          apps/${{ inputs.service }} \
+          --file docker/${{ inputs.service }}/Dockerfile \
+          --target ${{ inputs.target }} \
+          --progress=plain \
+          --cache-from=type=local,src=/tmp/.buildx-cache-${{ inputs.service }} \
+          --cache-to=type=local,dest=/tmp/.buildx-cache-${{ inputs.service }},mode=max \
+          --load
+      shell: bash

@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  firstname    String
+  lastname     String
+  email        String    @unique
+  password     String
+  phone_number String?
+  address      String?
+  role_id      Int
+  role         Role      @relation(fields: [role_id], references: [id])
+  posts        Post[]
+  comments     Comment[]
+  courses      Course[]  @relation("CreatedCourses")
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @default(now()) @updatedAt
+}
+
+model Role {
+  id         Int      @id @default(autoincrement())
+  name       String
+  users      User[]
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}
+
+model Category {
+  id               Int              @id @default(autoincrement())
+  name             String           @unique
+  courseCategories CourseCategory[]
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @default(now()) @updatedAt
+}
+
+model Course {
+  id               Int              @id @default(autoincrement())
+  name             String           @unique
+  description      String
+  content          String
+  image            String?
+  level            String
+  created_by       Int
+  creator          User             @relation("CreatedCourses", fields: [created_by], references: [id])
+  courseCategories CourseCategory[]
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @default(now()) @updatedAt
+}
+
+model CourseCategory {
+  id          Int      @id @default(autoincrement())
+  course_id   Int
+  category_id Int
+  course      Course   @relation(fields: [course_id], references: [id])
+  category    Category @relation(fields: [category_id], references: [id])
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now()) @updatedAt
+
+  @@unique([course_id, category_id])
+}
+
+model Post {
+  id         Int       @id @default(autoincrement())
+  title      String
+  content    String
+  user_id    Int
+  user       User      @relation(fields: [user_id], references: [id])
+  comments   Comment[]
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now()) @updatedAt
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  content    String
+  user_id    Int
+  post_id    Int
+  user       User     @relation(fields: [user_id], references: [id])
+  post       Post     @relation(fields: [post_id], references: [id])
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+}

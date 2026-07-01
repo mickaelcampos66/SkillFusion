@@ -1,0 +1,58 @@
+services:
+  frontend:
+    env_file: .env
+    restart: always
+    build:
+      context: ./apps/frontend
+      dockerfile: ../../docker/frontend/Dockerfile
+      target: prod
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
+    networks:
+      - frontend
+
+  backend:
+    env_file: .env
+    restart: always
+    build:
+      context: ./apps/backend
+      dockerfile: ../../docker/backend/Dockerfile
+      target: prod
+      args:
+        - DATABASE_URL=${DATABASE_URL}
+    ports:
+      - 3001:3000
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - backend
+      - frontend
+
+  database:
+    restart: always
+    image: postgres:16-alpine
+    volumes:
+      - database:/var/lib/postgresql/data
+    networks:
+      - backend
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+
+volumes:
+  database:
